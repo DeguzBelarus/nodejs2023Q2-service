@@ -1,4 +1,4 @@
-export type Nullable<T> = T | null;
+import { ICreateUserDto, IUpdatePasswordDto, Nullable } from '../types/types';
 
 export type FindEntityByIdResultType<T> =
   | T
@@ -10,6 +10,11 @@ export type UpdateUserPasswordResultType =
   | 'invalid data'
   | "user doesn't exist"
   | "passwords don't match";
+export type CreateUserResultType =
+  | IUserSafe
+  | 'login already in use'
+  | 'insufficient data for creation'
+  | 'invalid data';
 export type CreateEntityResultType<T> =
   | T
   | 'insufficient data for creation'
@@ -44,16 +49,6 @@ export interface IUserSafe {
 export interface IUser extends IUserSafe {
   password: string;
   updatePassword(newPassword: string): IUserSafe;
-}
-
-export interface ICreateUserDto {
-  login: string;
-  password: string;
-}
-
-export interface IUpdatePasswordDto {
-  oldPassword: string;
-  newPassword: string;
 }
 
 export interface IArtist {
@@ -131,7 +126,7 @@ export interface IFavoritesResponse {
 export interface IUserModel {
   findAll(): Array<IUserSafe>;
   findById(id: string): FindEntityByIdResultType<IUserSafe>;
-  create(userData: ICreateUserDto): CreateEntityResultType<IUserSafe>;
+  create(userData: ICreateUserDto): CreateUserResultType;
   updatePassword(
     id: string,
     passwordsData: IUpdatePasswordDto,

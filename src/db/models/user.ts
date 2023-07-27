@@ -1,25 +1,29 @@
 import { validate as uuidValidate } from 'uuid';
 
-import { User } from '../schemas';
+import { User, UserSafe } from '../schemas';
 import {
-  CreateEntityResultType,
+  CreateUserResultType,
   DeleteEntityResultType,
   FindEntityByIdResultType,
-  ICreateUserDto,
-  IUpdatePasswordDto,
   IUser,
   IUserModel,
   IUserSafe,
   UpdateUserPasswordResultType,
 } from '../types';
+import { ICreateUserDto, IUpdatePasswordDto } from 'src/types/types';
 
 export class UserModel implements IUserModel {
   private table: Array<IUser> = [];
 
   findAll(): Array<IUserSafe> {
     return this.table.map((user) => {
-      delete user.password;
-      return user;
+      return new UserSafe(
+        user.id,
+        user.login,
+        user.version,
+        user.createdAt,
+        user.updatedAt,
+      );
     });
   }
 
@@ -29,28 +33,40 @@ export class UserModel implements IUserModel {
     if (!foundUser) {
       return "entity doesn't exist";
     } else {
-      delete foundUser.password;
-      return foundUser;
+      return new UserSafe(
+        foundUser.id,
+        foundUser.login,
+        foundUser.version,
+        foundUser.createdAt,
+        foundUser.updatedAt,
+      );
     }
   }
 
-  create(userData: ICreateUserDto): CreateEntityResultType<IUserSafe> {
+  create(userData: ICreateUserDto): CreateUserResultType {
     if (
       typeof userData.login === 'undefined' ||
       typeof userData.password === 'undefined'
     )
       return 'insufficient data for creation';
     if (
-      typeof userData.login !== 'string' &&
+      typeof userData.login !== 'string' ||
       typeof userData.password !== 'string'
     )
       return 'invalid data';
     if (!userData.login.length && !userData.password.length)
       return 'invalid data';
+    if (this.table.some((user) => user.login === userData.login))
+      return 'login already in use';
     const newUser = new User(userData.login, userData.password);
     this.table.push(newUser);
-    delete newUser.password;
-    return newUser;
+    return new UserSafe(
+      newUser.id,
+      newUser.login,
+      newUser.version,
+      newUser.createdAt,
+      newUser.updatedAt,
+    );
   }
 
   updatePassword(
@@ -61,19 +77,26 @@ export class UserModel implements IUserModel {
     if (!passwordsData.newPassword && !passwordsData.oldPassword)
       return 'invalid data';
     if (
-      typeof passwordsData.newPassword !== 'string' &&
+      typeof passwordsData.newPassword !== 'string' ||
       typeof passwordsData.oldPassword !== 'string'
     )
       return 'invalid data';
     if (!passwordsData.newPassword.length && !passwordsData.oldPassword.length)
       return 'invalid data';
-    if (passwordsData.newPassword !== passwordsData.oldPassword)
-      return "passwords don't match";
     const foundUser = this.table.find((user) => user.id === id);
     if (!foundUser) {
       return "user doesn't exist";
     } else {
-      return foundUser.updatePassword(passwordsData.newPassword);
+      if (foundUser.password !== passwordsData.oldPassword)
+        return "passwords don't match";
+      const updatedUser = foundUser.updatePassword(passwordsData.newPassword);
+      return new UserSafe(
+        updatedUser.id,
+        updatedUser.login,
+        updatedUser.version,
+        updatedUser.createdAt,
+        updatedUser.updatedAt,
+      );
     }
   }
 

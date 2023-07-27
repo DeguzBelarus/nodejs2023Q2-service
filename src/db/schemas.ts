@@ -9,8 +9,8 @@ import {
   IUpdateTrackDto,
   IUser,
   IUserSafe,
-  Nullable,
 } from './types';
+import { Nullable } from 'src/types/types';
 
 export class User implements IUser {
   id = uuidv4();
@@ -36,6 +36,28 @@ export class User implements IUser {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
+  }
+}
+
+export class UserSafe implements IUserSafe {
+  id: string;
+  login: string;
+  version: number;
+  createdAt: number;
+  updatedAt: number;
+
+  constructor(
+    id: string,
+    login: string,
+    version: number,
+    createdAt: number,
+    updatedAt: number,
+  ) {
+    this.id = id;
+    this.login = login;
+    this.version = version;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 }
 
