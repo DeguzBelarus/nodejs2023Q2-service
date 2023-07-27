@@ -54,7 +54,7 @@ export class UserModel implements IUserModel {
       typeof userData.password !== 'string'
     )
       return 'invalid data';
-    if (!userData.login.length && !userData.password.length)
+    if (!userData.login.length || !userData.password.length)
       return 'invalid data';
     if (this.table.some((user) => user.login === userData.login))
       return 'login already in use';
@@ -81,7 +81,7 @@ export class UserModel implements IUserModel {
       typeof passwordsData.oldPassword !== 'string'
     )
       return 'invalid data';
-    if (!passwordsData.newPassword.length && !passwordsData.oldPassword.length)
+    if (!passwordsData.newPassword.length || !passwordsData.oldPassword.length)
       return 'invalid data';
     const foundUser = this.table.find((user) => user.id === id);
     if (!foundUser) {
