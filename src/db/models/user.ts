@@ -1,6 +1,5 @@
 import { validate as uuidValidate } from 'uuid';
 
-import { User, UserSafe } from '../schemas';
 import {
   CreateUserResultType,
   DeleteEntityResultType,
@@ -11,6 +10,8 @@ import {
   UpdateUserPasswordResultType,
 } from '../types';
 import { ICreateUserDto, IUpdatePasswordDto } from 'src/types/types';
+import { User } from '../schemas/user';
+import { UserSafe } from '../schemas/user-safe';
 
 export class UserModel implements IUserModel {
   private table: Array<IUser> = [];

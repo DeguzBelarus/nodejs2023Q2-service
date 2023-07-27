@@ -12,7 +12,7 @@ import {
   IUpdateArtistDto,
   UpdateEntityResultType,
 } from '../types';
-import { Artist } from '../schemas';
+import { Artist } from '../schemas/artist';
 
 export class ArtistModel implements IArtistModel {
   private table: Array<IArtist> = [];

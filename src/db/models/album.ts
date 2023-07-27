@@ -12,7 +12,7 @@ import {
   IUpdateAlbumDto,
   UpdateEntityResultType,
 } from '../types';
-import { Album } from '../schemas';
+import { Album } from '../schemas/album';
 
 export class AlbumModel implements IAlbumModel {
   private table: Array<IAlbum> = [];

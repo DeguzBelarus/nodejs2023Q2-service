@@ -12,7 +12,7 @@ import {
   IUpdateTrackDto,
   UpdateEntityResultType,
 } from '../types';
-import { Track } from '../schemas';
+import { Track } from '../schemas/track';
 
 export class TrackModel implements ITrackModel {
   private table: Array<ITrack> = [];
