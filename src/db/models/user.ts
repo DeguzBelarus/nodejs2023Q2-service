@@ -103,6 +103,11 @@ export class UserModel implements IUserModel {
   delete(id: string): DeleteEntityResultType {
     if (!uuidValidate(id)) return 'invalid uuid';
     const foundUser = this.table.find((user) => user.id === id);
-    return !foundUser ? "entity doesn't exist" : 'success';
+    if (foundUser) {
+      this.table = this.table.filter((user) => user.id !== id);
+      return 'success';
+    } else {
+      return "entity doesn't exist";
+    }
   }
 }
