@@ -4,14 +4,16 @@ import { Response } from 'express';
 import db from '../db/db';
 import { ICreateUserDto, IUpdatePasswordDto } from 'src/types/types';
 
+const { users: userModel } = db;
+
 @Injectable()
 export class UserService {
   getAll() {
-    return db.users.findAll();
+    return userModel.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getUserByIdResult = db.users.findById(id);
+    const getUserByIdResult = userModel.findById(id);
     switch (getUserByIdResult) {
       case 'invalid uuid':
         response
@@ -29,7 +31,7 @@ export class UserService {
   }
 
   createUser(createUserDto: ICreateUserDto, response: Response) {
-    const userCreationResult = db.users.create(createUserDto);
+    const userCreationResult = userModel.create(createUserDto);
     switch (userCreationResult) {
       case 'insufficient data for creation':
         response
@@ -56,7 +58,7 @@ export class UserService {
     updatePasswordDto: IUpdatePasswordDto,
     response: Response,
   ) {
-    const userUpdatingResult = db.users.updatePassword(id, updatePasswordDto);
+    const userUpdatingResult = userModel.updatePassword(id, updatePasswordDto);
     switch (userUpdatingResult) {
       case 'invalid uuid':
         response
@@ -84,7 +86,7 @@ export class UserService {
   }
 
   deleteUser(id: string, response: Response) {
-    const userDeletionResult = db.users.delete(id);
+    const userDeletionResult = userModel.delete(id);
     switch (userDeletionResult) {
       case 'invalid uuid':
         response
