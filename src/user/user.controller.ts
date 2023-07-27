@@ -100,7 +100,6 @@ export class UserController {
   @Delete(':id')
   deleteUser(@Param('id') id: string, @Res() response: Response) {
     const userDeletionResult = db.users.delete(id);
-
     switch (userDeletionResult) {
       case 'invalid uuid':
         response

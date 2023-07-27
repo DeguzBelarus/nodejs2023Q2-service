@@ -39,11 +39,9 @@ export class AlbumModel implements IAlbumModel {
     )
       return 'insufficient data for creation';
     if (
-      albumData.name &&
-      typeof albumData.name !== 'string' &&
-      albumData.year &&
-      typeof albumData.year !== 'number' &&
-      (typeof albumData.artistId !== 'string' || albumData.artistId !== null)
+      typeof albumData.name !== 'string' ||
+      typeof albumData.year !== 'number' ||
+      (typeof albumData.artistId !== 'string' && albumData.artistId !== null)
     )
       return 'invalid data';
     if (!albumData.name.length) return 'invalid data';
@@ -86,12 +84,11 @@ export class AlbumModel implements IAlbumModel {
     )
       return 'insufficient data for updating';
     if (
-      albumData.name &&
-      typeof albumData.name !== 'string' &&
-      albumData.year &&
-      typeof albumData.year !== 'number' &&
-      typeof albumData.artistId !== 'undefined' &&
-      (typeof albumData.artistId !== 'string' || albumData.artistId !== null)
+      (albumData.name && typeof albumData.name !== 'string') ||
+      (albumData.year && typeof albumData.year !== 'number') ||
+      (typeof albumData.artistId !== 'undefined' &&
+        typeof albumData.artistId !== 'string' &&
+        albumData.artistId !== null)
     )
       return 'invalid data';
     if (typeof albumData.name === 'string' && !albumData.name.length)

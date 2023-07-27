@@ -41,12 +41,12 @@ export class TrackModel implements ITrackModel {
     )
       return 'insufficient data for creation';
     if (
-      trackData.name &&
-      typeof trackData.name !== 'string' &&
-      trackData.duration &&
-      typeof trackData.duration !== 'number' &&
-      (typeof trackData.artistId !== 'string' || trackData.artistId !== null) &&
-      (typeof trackData.albumId !== 'string' || trackData.albumId !== null)
+      typeof trackData.name !== 'string' ||
+      typeof trackData.duration !== 'number' ||
+      (typeof trackData.artistId !== 'string' &&
+        trackData.artistId !== null &&
+        typeof trackData.albumId !== 'string' &&
+        trackData.albumId !== null)
     )
       return 'invalid data';
     if (!trackData.name.length) return 'invalid data';
@@ -101,12 +101,14 @@ export class TrackModel implements ITrackModel {
       return 'insufficient data for updating';
 
     if (
-      trackData.name &&
-      typeof trackData.name !== 'string' &&
-      trackData.duration &&
-      typeof trackData.duration !== 'number' &&
-      (typeof trackData.artistId !== 'string' || trackData.artistId !== null) &&
-      (typeof trackData.albumId !== 'string' || trackData.albumId !== null)
+      (trackData.name && typeof trackData.name !== 'string') ||
+      (trackData.duration && typeof trackData.duration !== 'number') ||
+      (typeof trackData.artistId !== 'undefined' &&
+        typeof trackData.artistId !== 'string' &&
+        trackData.artistId !== null) ||
+      (typeof trackData.albumId !== 'undefined' &&
+        typeof trackData.albumId !== 'string' &&
+        trackData.albumId !== null)
     )
       return 'invalid data';
     if (!trackData.name.length) return 'invalid data';

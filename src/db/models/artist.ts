@@ -34,7 +34,7 @@ export class ArtistModel implements IArtistModel {
     )
       return 'insufficient data for creation';
     if (
-      typeof artistData.grammy !== 'boolean' &&
+      typeof artistData.grammy !== 'boolean' ||
       typeof artistData.name !== 'string'
     )
       return 'invalid data';
@@ -53,17 +53,14 @@ export class ArtistModel implements IArtistModel {
     if (!foundArtist) {
       return "entity doesn't exist";
     }
-
     if (
       typeof artistData.grammy === 'undefined' &&
       typeof artistData.name === 'undefined'
     )
       return 'insufficient data for updating';
     if (
-      artistData.grammy &&
-      typeof artistData.grammy !== 'boolean' &&
-      artistData.name &&
-      typeof artistData.name !== 'string'
+      (artistData.grammy && typeof artistData.grammy !== 'boolean') ||
+      (artistData.name && typeof artistData.name !== 'string')
     )
       return 'invalid data';
     if (typeof artistData.name === 'string' && !artistData.name.length)
