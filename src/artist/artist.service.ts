@@ -4,7 +4,12 @@ import { Response } from 'express';
 import db from '../db/db';
 import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
 
-const { artists: artistModel, tracks: trackModel, albums: albumModel } = db;
+const {
+  artists: artistModel,
+  tracks: trackModel,
+  albums: albumModel,
+  favorites: favoritesModel,
+} = db;
 
 @Injectable()
 export class ArtistService {
@@ -81,7 +86,12 @@ export class ArtistService {
   }
 
   deleteArtist(id: string, response: Response) {
-    const artistDeletionResult = artistModel.delete(id, trackModel, albumModel);
+    const artistDeletionResult = artistModel.delete(
+      id,
+      trackModel,
+      albumModel,
+      favoritesModel,
+    );
     switch (artistDeletionResult) {
       case 'invalid uuid':
         response

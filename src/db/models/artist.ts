@@ -7,6 +7,7 @@ import {
   IAlbumModel,
   IArtist,
   IArtistModel,
+  IFavoritesModel,
   ITrackModel,
   UpdateEntityResultType,
 } from '../types';
@@ -71,6 +72,7 @@ export class ArtistModel implements IArtistModel {
     id: string,
     tracksList: ITrackModel,
     albumsList: IAlbumModel,
+    favorites: IFavoritesModel,
   ): DeleteEntityResultType {
     if (!uuidValidate(id)) return 'invalid uuid';
     const foundArtist = this.table.find((artist) => artist.id === id);
@@ -80,6 +82,7 @@ export class ArtistModel implements IArtistModel {
     this.table = this.table.filter((artist) => artist.id !== id);
     tracksList.clearArtist(foundArtist.id);
     albumsList.clearArtist(foundArtist.id);
+    favorites.deleteArtist(id);
     return 'success';
   }
 }

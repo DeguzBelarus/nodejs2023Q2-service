@@ -120,6 +120,7 @@ export interface IArtistModel {
     id: string,
     tracksList: ITrackModel,
     albumsList: IAlbumModel,
+    favorites: IFavoritesModel,
   ): DeleteEntityResultType;
 }
 
@@ -135,7 +136,11 @@ export interface IAlbumModel {
     artistsList: IArtistModel,
     albumData: IUpdateAlbumDto,
   ): UpdateEntityResultType<IAlbum>;
-  delete(id: string, tracksList: ITrackModel): DeleteEntityResultType;
+  delete(
+    id: string,
+    tracksList: ITrackModel,
+    favorites: IFavoritesModel,
+  ): DeleteEntityResultType;
   clearArtist(artistId: string): void;
 }
 
@@ -153,7 +158,7 @@ export interface ITrackModel {
     albumsList: IAlbumModel,
     trackData: IUpdateTrackDto,
   ): UpdateEntityResultType<ITrack>;
-  delete(id: string): DeleteEntityResultType;
+  delete(id: string, favorites: IFavoritesModel): DeleteEntityResultType;
   clearArtist(artistId: string): void;
   clearAlbum(albumId: string): void;
 }

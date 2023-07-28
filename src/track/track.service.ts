@@ -4,7 +4,12 @@ import { Response } from 'express';
 import db from '../db/db';
 import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
 
-const { tracks: trackModel, artists: artistModel, albums: albumModel } = db;
+const {
+  tracks: trackModel,
+  artists: artistModel,
+  albums: albumModel,
+  favorites: favoritesModel,
+} = db;
 
 @Injectable()
 export class TrackService {
@@ -86,7 +91,7 @@ export class TrackService {
   }
 
   deleteTrack(id: string, response: Response) {
-    const trackDeletionResult = trackModel.delete(id);
+    const trackDeletionResult = trackModel.delete(id, favoritesModel);
     switch (trackDeletionResult) {
       case 'invalid uuid':
         response

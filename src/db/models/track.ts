@@ -6,6 +6,7 @@ import {
   FindEntityByIdResultType,
   IAlbumModel,
   IArtistModel,
+  IFavoritesModel,
   ITrack,
   ITrackModel,
   UpdateEntityResultType,
@@ -133,13 +134,14 @@ export class TrackModel implements ITrackModel {
     return foundTrack.updateData(trackData);
   }
 
-  delete(id: string): DeleteEntityResultType {
+  delete(id: string, favorites: IFavoritesModel): DeleteEntityResultType {
     if (!uuidValidate(id)) return 'invalid uuid';
     const foundTrack = this.table.find((track) => track.id === id);
     if (!foundTrack) {
       return "entity doesn't exist";
     }
     this.table = this.table.filter((track) => track.id !== id);
+    favorites.deleteTrack(id);
     return 'success';
   }
 
