@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Res,
-  Param,
-  Body,
-  Get,
-  Post,
-  Put,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Res, Param, Get, Post, Delete } from '@nestjs/common';
 import { Response } from 'express';
 
 import { FavoritesService } from './favorites.service';
