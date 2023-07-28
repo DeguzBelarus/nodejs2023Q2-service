@@ -19,6 +19,7 @@ export class User implements IUser {
   updatePassword(newPassword: string): IUserSafe {
     this.password = newPassword;
     this.updatedAt = Date.now();
+    this.version++;
     return {
       id: this.id,
       login: this.login,
