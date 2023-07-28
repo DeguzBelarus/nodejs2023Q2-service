@@ -1,10 +1,12 @@
 import {
   ICreateAlbumDto,
   ICreateArtistDto,
+  ICreateTrackDto,
   ICreateUserDto,
   IUpdateAlbumDto,
   IUpdateArtistDto,
   IUpdatePasswordDto,
+  IUpdateTrackDto,
   Nullable,
 } from '../types/types';
 
@@ -73,20 +75,6 @@ export interface ITrack {
   albumId: Nullable<string>;
   duration: number;
   updateData(trackData: IUpdateTrackDto): ITrack;
-}
-
-export interface ICreateTrackDto {
-  name: string;
-  artistId: Nullable<string>;
-  albumId: Nullable<string>;
-  duration: number;
-}
-
-export interface IUpdateTrackDto {
-  name?: string;
-  artistId?: Nullable<string>;
-  albumId?: Nullable<string>;
-  duration?: number;
 }
 
 export interface IAlbum {

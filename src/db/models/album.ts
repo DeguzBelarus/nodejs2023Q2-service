@@ -53,15 +53,14 @@ export class AlbumModel implements IAlbumModel {
       ) {
         return 'invalid data';
       }
-    } else {
-      const newAlbum = new Album(
-        albumData.name,
-        albumData.year,
-        albumData.artistId,
-      );
-      this.table.push(newAlbum);
-      return newAlbum;
     }
+    const newAlbum = new Album(
+      albumData.name,
+      albumData.year,
+      albumData.artistId,
+    );
+    this.table.push(newAlbum);
+    return newAlbum;
   }
 
   update(

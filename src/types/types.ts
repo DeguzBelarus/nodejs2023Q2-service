@@ -31,3 +31,17 @@ export interface IUpdateAlbumDto {
   year?: number;
   artistId?: Nullable<string>;
 }
+
+export interface ICreateTrackDto {
+  name: string;
+  artistId: Nullable<string>;
+  albumId: Nullable<string>;
+  duration: number;
+}
+
+export interface IUpdateTrackDto {
+  name?: string;
+  artistId?: Nullable<string>;
+  albumId?: Nullable<string>;
+  duration?: number;
+}

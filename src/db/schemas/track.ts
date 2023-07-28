@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { ITrack, IUpdateTrackDto } from '../types';
-import { Nullable } from 'src/types/types';
+import { ITrack } from '../types';
+import { IUpdateTrackDto, Nullable } from 'src/types/types';
 
 export class Track implements ITrack {
   id = uuidv4();

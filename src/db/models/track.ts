@@ -6,13 +6,12 @@ import {
   FindEntityByIdResultType,
   IAlbumModel,
   IArtistModel,
-  ICreateTrackDto,
   ITrack,
   ITrackModel,
-  IUpdateTrackDto,
   UpdateEntityResultType,
 } from '../types';
 import { Track } from '../schemas/track';
+import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
 
 export class TrackModel implements ITrackModel {
   private table: Array<ITrack> = [];
