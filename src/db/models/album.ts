@@ -111,7 +111,7 @@ export class AlbumModel implements IAlbumModel {
     if (!foundAlbum) {
       return "entity doesn't exist";
     }
-    this.table === this.table.filter((album) => album.id !== id);
+    this.table = this.table.filter((album) => album.id !== id);
     tracksList.clearAlbum(foundAlbum.id);
     return 'success';
   }

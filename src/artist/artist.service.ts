@@ -2,19 +2,19 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
 import db from '../db/db';
-import { ICreateUserDto, IUpdatePasswordDto } from 'src/types/types';
+import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
 
-const { users: userModel } = db;
+const { artists: artistModel, tracks: trackModel, albums: albumModel } = db;
 
 @Injectable()
-export class UserService {
+export class ArtistService {
   getAll() {
-    return userModel.findAll();
+    return artistModel.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getUserByIdResult = userModel.findById(id);
-    switch (getUserByIdResult) {
+    const getArtistByIdResult = artistModel.findById(id);
+    switch (getArtistByIdResult) {
       case 'invalid uuid':
         response
           .status(HttpStatus.BAD_REQUEST)
@@ -23,25 +23,20 @@ export class UserService {
       case "entity doesn't exist":
         response
           .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
+          .send({ message: 'the artist with the specified ID was not found' });
         break;
       default:
-        response.status(HttpStatus.OK).send(getUserByIdResult);
+        response.status(HttpStatus.OK).send(getArtistByIdResult);
     }
   }
 
-  createUser(createUserDto: ICreateUserDto, response: Response) {
-    const userCreationResult = userModel.create(createUserDto);
-    switch (userCreationResult) {
+  createArtist(createArtistDto: ICreateArtistDto, response: Response) {
+    const artistCreationResult = artistModel.create(createArtistDto);
+    switch (artistCreationResult) {
       case 'insufficient data for creation':
         response
           .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to create user' });
-        break;
-      case 'login already in use':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'specified login name is already in use' });
+          .send({ message: 'insufficient data to create an artist' });
         break;
       case 'invalid data':
         response
@@ -49,17 +44,17 @@ export class UserService {
           .send({ message: 'invalid data received' });
         break;
       default:
-        response.status(HttpStatus.CREATED).send(userCreationResult);
+        response.status(HttpStatus.CREATED).send(artistCreationResult);
     }
   }
 
-  updateUser(
+  updateArtist(
     id: string,
-    updatePasswordDto: IUpdatePasswordDto,
+    updateArtistDto: IUpdateArtistDto,
     response: Response,
   ) {
-    const userUpdatingResult = userModel.updatePassword(id, updatePasswordDto);
-    switch (userUpdatingResult) {
+    const artistUpdatingResult = artistModel.update(id, updateArtistDto);
+    switch (artistUpdatingResult) {
       case 'invalid uuid':
         response
           .status(HttpStatus.BAD_REQUEST)
@@ -70,24 +65,24 @@ export class UserService {
           .status(HttpStatus.BAD_REQUEST)
           .send({ message: 'invalid data received' });
         break;
-      case "passwords don't match":
+      case 'insufficient data for updating':
         response
-          .status(HttpStatus.FORBIDDEN)
-          .send({ message: 'the specified old password is wrong' });
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'insufficient data to update an artist' });
         break;
-      case "user doesn't exist":
+      case "entity doesn't exist":
         response
           .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
+          .send({ message: 'the artist with the specified ID was not found' });
         break;
       default:
-        response.status(HttpStatus.OK).send(userUpdatingResult);
+        response.status(HttpStatus.OK).send(artistUpdatingResult);
     }
   }
 
-  deleteUser(id: string, response: Response) {
-    const userDeletionResult = userModel.delete(id);
-    switch (userDeletionResult) {
+  deleteArtist(id: string, response: Response) {
+    const artistDeletionResult = artistModel.delete(id, trackModel, albumModel);
+    switch (artistDeletionResult) {
       case 'invalid uuid':
         response
           .status(HttpStatus.BAD_REQUEST)

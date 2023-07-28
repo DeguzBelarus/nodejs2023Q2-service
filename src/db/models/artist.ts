@@ -7,12 +7,11 @@ import {
   IAlbumModel,
   IArtist,
   IArtistModel,
-  ICreateArtistDto,
   ITrackModel,
-  IUpdateArtistDto,
   UpdateEntityResultType,
 } from '../types';
 import { Artist } from '../schemas/artist';
+import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
 
 export class ArtistModel implements IArtistModel {
   private table: Array<IArtist> = [];
@@ -78,7 +77,7 @@ export class ArtistModel implements IArtistModel {
     if (!foundArtist) {
       return "entity doesn't exist";
     }
-    this.table === this.table.filter((artist) => artist.id !== id);
+    this.table = this.table.filter((artist) => artist.id !== id);
     tracksList.clearArtist(foundArtist.id);
     albumsList.clearArtist(foundArtist.id);
     return 'success';

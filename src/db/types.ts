@@ -1,4 +1,10 @@
-import { ICreateUserDto, IUpdatePasswordDto, Nullable } from '../types/types';
+import {
+  ICreateArtistDto,
+  ICreateUserDto,
+  IUpdateArtistDto,
+  IUpdatePasswordDto,
+  Nullable,
+} from '../types/types';
 
 export type FindEntityByIdResultType<T> =
   | T
@@ -56,16 +62,6 @@ export interface IArtist {
   name: string;
   grammy: boolean;
   updateData(artistData: IUpdateArtistDto): IArtist;
-}
-
-export interface ICreateArtistDto {
-  name: string;
-  grammy: boolean;
-}
-
-export interface IUpdateArtistDto {
-  name?: string;
-  grammy?: boolean;
 }
 
 export interface ITrack {

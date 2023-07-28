@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { IArtist, IUpdateArtistDto } from '../types';
+import { IArtist } from '../types';
+import { IUpdateArtistDto } from 'src/types/types';
 
 export class Artist implements IArtist {
   id = uuidv4();
