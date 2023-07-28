@@ -3,6 +3,7 @@ import { Response } from 'express';
 
 import db from '../db/db';
 import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
+
 const { tracks: trackModel, artists: artistModel, albums: albumModel } = db;
 
 @Injectable()
