@@ -7,12 +7,11 @@ import {
   IAlbum,
   IAlbumModel,
   IArtistModel,
-  ICreateAlbumDto,
   ITrackModel,
-  IUpdateAlbumDto,
   UpdateEntityResultType,
 } from '../types';
 import { Album } from '../schemas/album';
+import { ICreateAlbumDto, IUpdateAlbumDto } from 'src/types/types';
 
 export class AlbumModel implements IAlbumModel {
   private table: Array<IAlbum> = [];

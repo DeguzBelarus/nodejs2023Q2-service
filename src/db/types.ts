@@ -1,6 +1,8 @@
 import {
+  ICreateAlbumDto,
   ICreateArtistDto,
   ICreateUserDto,
+  IUpdateAlbumDto,
   IUpdateArtistDto,
   IUpdatePasswordDto,
   Nullable,
@@ -93,18 +95,6 @@ export interface IAlbum {
   year: number;
   artistId: Nullable<string>;
   updateData(albumData: IUpdateAlbumDto): IAlbum;
-}
-
-export interface ICreateAlbumDto {
-  name: string;
-  year: number;
-  artistId: Nullable<string>;
-}
-
-export interface IUpdateAlbumDto {
-  name?: string;
-  year?: number;
-  artistId?: Nullable<string>;
 }
 
 export interface IFavorites {

@@ -36,7 +36,7 @@ export class ArtistController {
   }
 
   @Put(':id')
-  updateUser(
+  updateArtist(
     @Param('id') id: string,
     @Body() updateArtistDto: IUpdateArtistDto,
     @Res() response: Response,
@@ -45,7 +45,7 @@ export class ArtistController {
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string, @Res() response: Response) {
+  deleteArtist(@Param('id') id: string, @Res() response: Response) {
     return this.artistService.deleteArtist(id, response);
   }
 }
