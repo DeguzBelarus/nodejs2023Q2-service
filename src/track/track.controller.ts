@@ -7,11 +7,13 @@ import {
   Post,
   Put,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
 import { TrackService } from './track.service';
+import { CreateTrackDto, UpdateTrackDto } from 'src/db/dto/track';
 
 @Controller('track')
 export class TrackController {
@@ -27,18 +29,20 @@ export class TrackController {
     return this.trackService.getById(id, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Post()
   createTrack(
-    @Body() createTrackDto: ICreateTrackDto,
+    @Body() createTrackDto: CreateTrackDto,
     @Res() response: Response,
   ) {
     return this.trackService.createTrack(createTrackDto, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   updateTrack(
     @Param('id') id: string,
-    @Body() updateTrackDto: IUpdateTrackDto,
+    @Body() updateTrackDto: UpdateTrackDto,
     @Res() response: Response,
   ) {
     return this.trackService.updateTrack(id, updateTrackDto, response);

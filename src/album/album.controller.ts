@@ -7,11 +7,13 @@ import {
   Post,
   Put,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { ICreateAlbumDto, IUpdateAlbumDto } from 'src/types/types';
 import { AlbumService } from './album.service';
+import { CreateAlbumDto, UpdateAlbumDto } from 'src/db/dto/album';
 
 @Controller('album')
 export class AlbumController {
@@ -27,18 +29,20 @@ export class AlbumController {
     return this.albumService.getById(id, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Post()
   createAlbum(
-    @Body() createAlbumDto: ICreateAlbumDto,
+    @Body() createAlbumDto: CreateAlbumDto,
     @Res() response: Response,
   ) {
     return this.albumService.createAlbum(createAlbumDto, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   updateAlbum(
     @Param('id') id: string,
-    @Body() updateAlbumDto: IUpdateAlbumDto,
+    @Body() updateAlbumDto: UpdateAlbumDto,
     @Res() response: Response,
   ) {
     return this.albumService.updateAlbum(id, updateAlbumDto, response);

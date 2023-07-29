@@ -7,11 +7,13 @@ import {
   Post,
   Put,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
 import { ArtistService } from './artist.service';
+import { CreateArtistDto, UpdateArtistDto } from 'src/db/dto/artist';
 
 @Controller('artist')
 export class ArtistController {
@@ -27,18 +29,20 @@ export class ArtistController {
     return this.artistService.getById(id, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Post()
   createArtist(
-    @Body() createArtistDto: ICreateArtistDto,
+    @Body() createArtistDto: CreateArtistDto,
     @Res() response: Response,
   ) {
     return this.artistService.createArtist(createArtistDto, response);
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   updateArtist(
     @Param('id') id: string,
-    @Body() updateArtistDto: IUpdateArtistDto,
+    @Body() updateArtistDto: UpdateArtistDto,
     @Res() response: Response,
   ) {
     return this.artistService.updateArtist(id, updateArtistDto, response);
