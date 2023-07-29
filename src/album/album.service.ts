@@ -1,5 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { Response } from 'express';
+import { Injectable } from '@nestjs/common';
 
 import { ICreateAlbumDto, IUpdateAlbumDto } from 'src/types/types';
 import { DatabaseService } from 'src/db/db.service';
@@ -12,96 +11,27 @@ export class AlbumService {
     return this.dataBase.albums.findAll();
   }
 
-  getById(id: string, response: Response) {
-    const getAlbumByIdResult = this.dataBase.albums.findById(id);
-    switch (getAlbumByIdResult) {
-      case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
-      case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the album with the specified ID was not found' });
-        break;
-      default:
-        response.status(HttpStatus.OK).send(getAlbumByIdResult);
-    }
+  getById(id: string) {
+    return this.dataBase.albums.findById(id);
   }
 
-  createAlbum(createAlbumDto: ICreateAlbumDto, response: Response) {
-    const albumCreationResult = this.dataBase.albums.create(
-      this.dataBase.artists,
-      createAlbumDto,
-    );
-    switch (albumCreationResult) {
-      case 'insufficient data for creation':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to create an album' });
-        break;
-      case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
-      default:
-        response.status(HttpStatus.CREATED).send(albumCreationResult);
-    }
+  createAlbum(createAlbumDto: ICreateAlbumDto) {
+    return this.dataBase.albums.create(this.dataBase.artists, createAlbumDto);
   }
 
-  updateAlbum(id: string, updateAlbumDto: IUpdateAlbumDto, response: Response) {
-    const albumUpdatingResult = this.dataBase.albums.update(
+  updateAlbum(id: string, updateAlbumDto: IUpdateAlbumDto) {
+    return this.dataBase.albums.update(
       id,
       this.dataBase.artists,
       updateAlbumDto,
     );
-    switch (albumUpdatingResult) {
-      case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
-      case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
-      case 'insufficient data for updating':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to update an album' });
-        break;
-      case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the album with the specified ID was not found' });
-        break;
-      default:
-        response.status(HttpStatus.OK).send(albumUpdatingResult);
-    }
   }
 
-  deleteAlbum(id: string, response: Response) {
-    const albumDeletionResult = this.dataBase.albums.delete(
+  deleteAlbum(id: string) {
+    return this.dataBase.albums.delete(
       id,
       this.dataBase.tracks,
       this.dataBase.favorites,
     );
-    switch (albumDeletionResult) {
-      case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
-      case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the album with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
-    }
   }
 }

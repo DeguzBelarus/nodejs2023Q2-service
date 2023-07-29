@@ -9,6 +9,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -26,7 +27,21 @@ export class AlbumController {
 
   @Get(':id')
   getById(@Param('id') id: string, @Res() response: Response) {
-    return this.albumService.getById(id, response);
+    const getAlbumByIdResult = this.albumService.getById(id);
+    switch (getAlbumByIdResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case "entity doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the album with the specified ID was not found' });
+        break;
+      default:
+        response.status(HttpStatus.OK).send(getAlbumByIdResult);
+    }
   }
 
   @UsePipes(new ValidationPipe())
@@ -35,7 +50,21 @@ export class AlbumController {
     @Body() createAlbumDto: CreateAlbumDto,
     @Res() response: Response,
   ) {
-    return this.albumService.createAlbum(createAlbumDto, response);
+    const albumCreationResult = this.albumService.createAlbum(createAlbumDto);
+    switch (albumCreationResult) {
+      case 'insufficient data for creation':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'insufficient data to create an album' });
+        break;
+      case 'invalid data':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid data received' });
+        break;
+      default:
+        response.status(HttpStatus.CREATED).send(albumCreationResult);
+    }
   }
 
   @UsePipes(new ValidationPipe())
@@ -45,11 +74,52 @@ export class AlbumController {
     @Body() updateAlbumDto: UpdateAlbumDto,
     @Res() response: Response,
   ) {
-    return this.albumService.updateAlbum(id, updateAlbumDto, response);
+    const albumUpdatingResult = this.albumService.updateAlbum(
+      id,
+      updateAlbumDto,
+    );
+    switch (albumUpdatingResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case 'invalid data':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid data received' });
+        break;
+      case 'insufficient data for updating':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'insufficient data to update an album' });
+        break;
+      case "entity doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the album with the specified ID was not found' });
+        break;
+      default:
+        response.status(HttpStatus.OK).send(albumUpdatingResult);
+    }
   }
 
   @Delete(':id')
   deleteAlbum(@Param('id') id: string, @Res() response: Response) {
-    return this.albumService.deleteAlbum(id, response);
+    const albumDeletionResult = this.albumService.deleteAlbum(id);
+    switch (albumDeletionResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case "entity doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the album with the specified ID was not found' });
+        break;
+      case 'success':
+        response.status(HttpStatus.NO_CONTENT).send();
+    }
   }
 }

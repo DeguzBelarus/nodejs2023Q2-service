@@ -9,6 +9,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -26,13 +27,46 @@ export class UserController {
 
   @Get(':id')
   getById(@Param('id') id: string, @Res() response: Response) {
-    return this.userService.getById(id, response);
+    const getUserByIdResult = this.userService.getById(id);
+    switch (getUserByIdResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case "entity doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the user with the specified ID was not found' });
+        break;
+      default:
+        response.status(HttpStatus.OK).send(getUserByIdResult);
+    }
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
   createUser(@Body() createUserDto: CreateUserDto, @Res() response: Response) {
-    return this.userService.createUser(createUserDto, response);
+    const userCreationResult = this.userService.createUser(createUserDto);
+    switch (userCreationResult) {
+      case 'insufficient data for creation':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'insufficient data to create user' });
+        break;
+      case 'login already in use':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'specified login name is already in use' });
+        break;
+      case 'invalid data':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid data received' });
+        break;
+      default:
+        response.status(HttpStatus.CREATED).send(userCreationResult);
+    }
   }
 
   @UsePipes(new ValidationPipe())
@@ -42,11 +76,52 @@ export class UserController {
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Res() response: Response,
   ) {
-    return this.userService.updateUser(id, updatePasswordDto, response);
+    const userUpdatingResult = this.userService.updateUser(
+      id,
+      updatePasswordDto,
+    );
+    switch (userUpdatingResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case 'invalid data':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid data received' });
+        break;
+      case "passwords don't match":
+        response
+          .status(HttpStatus.FORBIDDEN)
+          .send({ message: 'the specified old password is wrong' });
+        break;
+      case "user doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the user with the specified ID was not found' });
+        break;
+      default:
+        response.status(HttpStatus.OK).send(userUpdatingResult);
+    }
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string, @Res() response: Response) {
-    return this.userService.deleteUser(id, response);
+    const userDeletionResult = this.userService.deleteUser(id);
+    switch (userDeletionResult) {
+      case 'invalid uuid':
+        response
+          .status(HttpStatus.BAD_REQUEST)
+          .send({ message: 'invalid uuid' });
+        break;
+      case "entity doesn't exist":
+        response
+          .status(HttpStatus.NOT_FOUND)
+          .send({ message: 'the user with the specified ID was not found' });
+        break;
+      case 'success':
+        response.status(HttpStatus.NO_CONTENT).send();
+    }
   }
 }
