@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import { DbService } from 'src/db/db.service';
+import { DatabaseService } from 'src/db/db.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly dataBase: DbService) {}
+  constructor(private readonly dataBase: DatabaseService) {}
 
   get() {
     return this.dataBase.favorites.get();

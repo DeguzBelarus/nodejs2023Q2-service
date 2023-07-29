@@ -2,11 +2,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
 import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
-import { DbService } from 'src/db/db.service';
+import { DatabaseService } from 'src/db/db.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly dataBase: DbService) {}
+  constructor(private readonly dataBase: DatabaseService) {}
 
   getAll() {
     return this.dataBase.tracks.findAll();

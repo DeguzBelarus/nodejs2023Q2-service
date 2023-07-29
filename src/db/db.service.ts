@@ -5,10 +5,10 @@ import { ArtistModel } from './models/artist';
 import { FavoritesModel } from './models/favorites';
 import { TrackModel } from './models/track';
 import { UserModel } from './models/user';
-import { IDb } from './types';
+import { IDatabase } from './types';
 
 @Injectable()
-export class DbService implements IDb {
+export class DatabaseService implements IDatabase {
   users = new UserModel();
   artists = new ArtistModel();
   albums = new AlbumModel();

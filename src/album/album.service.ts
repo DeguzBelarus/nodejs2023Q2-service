@@ -2,11 +2,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
 import { ICreateAlbumDto, IUpdateAlbumDto } from 'src/types/types';
-import { DbService } from 'src/db/db.service';
+import { DatabaseService } from 'src/db/db.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly dataBase: DbService) {}
+  constructor(private readonly dataBase: DatabaseService) {}
 
   getAll() {
     return this.dataBase.albums.findAll();

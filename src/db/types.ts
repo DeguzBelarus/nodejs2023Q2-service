@@ -173,7 +173,7 @@ export interface IFavoritesModel extends IFavoritesResponse {
   deleteArtist(id: string): DeleteFavoriteResultType;
 }
 
-export interface IDb {
+export interface IDatabase {
   users: IUserModel;
   artists: IArtistModel;
   albums: IAlbumModel;
