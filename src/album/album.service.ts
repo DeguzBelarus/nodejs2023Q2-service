@@ -1,24 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '../db/db';
 import { ICreateAlbumDto, IUpdateAlbumDto } from 'src/types/types';
-
-const {
-  albums: albumModel,
-  artists: artistModel,
-  tracks: trackModel,
-  favorites: favoritesModel,
-} = db;
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class AlbumService {
+  constructor(private readonly dataBase: DbService) {}
+
   getAll() {
-    return albumModel.findAll();
+    return this.dataBase.albums.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getAlbumByIdResult = albumModel.findById(id);
+    const getAlbumByIdResult = this.dataBase.albums.findById(id);
     switch (getAlbumByIdResult) {
       case 'invalid uuid':
         response
@@ -36,7 +31,10 @@ export class AlbumService {
   }
 
   createAlbum(createAlbumDto: ICreateAlbumDto, response: Response) {
-    const albumCreationResult = albumModel.create(artistModel, createAlbumDto);
+    const albumCreationResult = this.dataBase.albums.create(
+      this.dataBase.artists,
+      createAlbumDto,
+    );
     switch (albumCreationResult) {
       case 'insufficient data for creation':
         response
@@ -54,9 +52,9 @@ export class AlbumService {
   }
 
   updateAlbum(id: string, updateAlbumDto: IUpdateAlbumDto, response: Response) {
-    const albumUpdatingResult = albumModel.update(
+    const albumUpdatingResult = this.dataBase.albums.update(
       id,
-      artistModel,
+      this.dataBase.artists,
       updateAlbumDto,
     );
     switch (albumUpdatingResult) {
@@ -86,10 +84,10 @@ export class AlbumService {
   }
 
   deleteAlbum(id: string, response: Response) {
-    const albumDeletionResult = albumModel.delete(
+    const albumDeletionResult = this.dataBase.albums.delete(
       id,
-      trackModel,
-      favoritesModel,
+      this.dataBase.tracks,
+      this.dataBase.favorites,
     );
     switch (albumDeletionResult) {
       case 'invalid uuid':

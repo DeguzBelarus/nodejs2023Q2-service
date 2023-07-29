@@ -1,24 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '../db/db';
 import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
-
-const {
-  artists: artistModel,
-  tracks: trackModel,
-  albums: albumModel,
-  favorites: favoritesModel,
-} = db;
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class ArtistService {
+  constructor(private readonly dataBase: DbService) {}
+
   getAll() {
-    return artistModel.findAll();
+    return this.dataBase.artists.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getArtistByIdResult = artistModel.findById(id);
+    const getArtistByIdResult = this.dataBase.artists.findById(id);
     switch (getArtistByIdResult) {
       case 'invalid uuid':
         response
@@ -36,7 +31,7 @@ export class ArtistService {
   }
 
   createArtist(createArtistDto: ICreateArtistDto, response: Response) {
-    const artistCreationResult = artistModel.create(createArtistDto);
+    const artistCreationResult = this.dataBase.artists.create(createArtistDto);
     switch (artistCreationResult) {
       case 'insufficient data for creation':
         response
@@ -58,7 +53,10 @@ export class ArtistService {
     updateArtistDto: IUpdateArtistDto,
     response: Response,
   ) {
-    const artistUpdatingResult = artistModel.update(id, updateArtistDto);
+    const artistUpdatingResult = this.dataBase.artists.update(
+      id,
+      updateArtistDto,
+    );
     switch (artistUpdatingResult) {
       case 'invalid uuid':
         response
@@ -86,11 +84,11 @@ export class ArtistService {
   }
 
   deleteArtist(id: string, response: Response) {
-    const artistDeletionResult = artistModel.delete(
+    const artistDeletionResult = this.dataBase.artists.delete(
       id,
-      trackModel,
-      albumModel,
-      favoritesModel,
+      this.dataBase.tracks,
+      this.dataBase.albums,
+      this.dataBase.favorites,
     );
     switch (artistDeletionResult) {
       case 'invalid uuid':

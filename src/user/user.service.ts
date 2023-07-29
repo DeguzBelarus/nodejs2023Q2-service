@@ -1,19 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '../db/db';
 import { ICreateUserDto, IUpdatePasswordDto } from 'src/types/types';
-
-const { users: userModel } = db;
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly dataBase: DbService) {}
+
   getAll() {
-    return userModel.findAll();
+    return this.dataBase.users.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getUserByIdResult = userModel.findById(id);
+    const getUserByIdResult = this.dataBase.users.findById(id);
     switch (getUserByIdResult) {
       case 'invalid uuid':
         response
@@ -31,7 +31,7 @@ export class UserService {
   }
 
   createUser(createUserDto: ICreateUserDto, response: Response) {
-    const userCreationResult = userModel.create(createUserDto);
+    const userCreationResult = this.dataBase.users.create(createUserDto);
     switch (userCreationResult) {
       case 'insufficient data for creation':
         response
@@ -58,7 +58,10 @@ export class UserService {
     updatePasswordDto: IUpdatePasswordDto,
     response: Response,
   ) {
-    const userUpdatingResult = userModel.updatePassword(id, updatePasswordDto);
+    const userUpdatingResult = this.dataBase.users.updatePassword(
+      id,
+      updatePasswordDto,
+    );
     switch (userUpdatingResult) {
       case 'invalid uuid':
         response
@@ -86,7 +89,7 @@ export class UserService {
   }
 
   deleteUser(id: string, response: Response) {
-    const userDeletionResult = userModel.delete(id);
+    const userDeletionResult = this.dataBase.users.delete(id);
     switch (userDeletionResult) {
       case 'invalid uuid':
         response

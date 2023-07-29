@@ -1,25 +1,20 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '../db/db';
-
-const {
-  artists: artistModel,
-  tracks: trackModel,
-  albums: albumModel,
-  favorites: favoritesModel,
-} = db;
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class FavoritesService {
+  constructor(private readonly dataBase: DbService) {}
+
   get() {
-    return favoritesModel.get();
+    return this.dataBase.favorites.get();
   }
 
   addArtist(id: string, response: Response) {
-    const addArtistToFavoritesResult = favoritesModel.addArtist(
+    const addArtistToFavoritesResult = this.dataBase.favorites.addArtist(
       id,
-      artistModel,
+      this.dataBase.artists,
     );
     switch (addArtistToFavoritesResult) {
       case 'invalid uuid':
@@ -38,7 +33,10 @@ export class FavoritesService {
   }
 
   addAlbum(id: string, response: Response) {
-    const addAlbumToFavoritesResult = favoritesModel.addAlbum(id, albumModel);
+    const addAlbumToFavoritesResult = this.dataBase.favorites.addAlbum(
+      id,
+      this.dataBase.albums,
+    );
     switch (addAlbumToFavoritesResult) {
       case 'invalid uuid':
         response
@@ -56,7 +54,10 @@ export class FavoritesService {
   }
 
   addTrack(id: string, response: Response) {
-    const addTrackToFavoritesResult = favoritesModel.addTrack(id, trackModel);
+    const addTrackToFavoritesResult = this.dataBase.favorites.addTrack(
+      id,
+      this.dataBase.tracks,
+    );
     switch (addTrackToFavoritesResult) {
       case 'invalid uuid':
         response
@@ -74,7 +75,8 @@ export class FavoritesService {
   }
 
   deleteArtist(id: string, response: Response) {
-    const deleteArtistFromFavoritesResult = favoritesModel.deleteArtist(id);
+    const deleteArtistFromFavoritesResult =
+      this.dataBase.favorites.deleteArtist(id);
     switch (deleteArtistFromFavoritesResult) {
       case 'invalid uuid':
         response
@@ -93,7 +95,8 @@ export class FavoritesService {
   }
 
   deleteAlbum(id: string, response: Response) {
-    const deleteAlbumFromFavoritesResult = favoritesModel.deleteAlbum(id);
+    const deleteAlbumFromFavoritesResult =
+      this.dataBase.favorites.deleteAlbum(id);
     switch (deleteAlbumFromFavoritesResult) {
       case 'invalid uuid':
         response
@@ -112,7 +115,8 @@ export class FavoritesService {
   }
 
   deleteTrack(id: string, response: Response) {
-    const deleteTrackFromFavoritesResult = favoritesModel.deleteTrack(id);
+    const deleteTrackFromFavoritesResult =
+      this.dataBase.favorites.deleteTrack(id);
     switch (deleteTrackFromFavoritesResult) {
       case 'invalid uuid':
         response

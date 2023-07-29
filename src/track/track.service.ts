@@ -1,24 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Response } from 'express';
 
-import db from '../db/db';
 import { ICreateTrackDto, IUpdateTrackDto } from 'src/types/types';
-
-const {
-  tracks: trackModel,
-  artists: artistModel,
-  albums: albumModel,
-  favorites: favoritesModel,
-} = db;
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class TrackService {
+  constructor(private readonly dataBase: DbService) {}
+
   getAll() {
-    return trackModel.findAll();
+    return this.dataBase.tracks.findAll();
   }
 
   getById(id: string, response: Response) {
-    const getTrackByIdResult = trackModel.findById(id);
+    const getTrackByIdResult = this.dataBase.tracks.findById(id);
     switch (getTrackByIdResult) {
       case 'invalid uuid':
         response
@@ -36,9 +31,9 @@ export class TrackService {
   }
 
   createTrack(createTrackDto: ICreateTrackDto, response: Response) {
-    const trackCreationResult = trackModel.create(
-      artistModel,
-      albumModel,
+    const trackCreationResult = this.dataBase.tracks.create(
+      this.dataBase.artists,
+      this.dataBase.albums,
       createTrackDto,
     );
     switch (trackCreationResult) {
@@ -58,10 +53,10 @@ export class TrackService {
   }
 
   updateTrack(id: string, updateTrackDto: IUpdateTrackDto, response: Response) {
-    const trackUpdatingResult = trackModel.update(
+    const trackUpdatingResult = this.dataBase.tracks.update(
       id,
-      artistModel,
-      albumModel,
+      this.dataBase.artists,
+      this.dataBase.albums,
       updateTrackDto,
     );
     switch (trackUpdatingResult) {
@@ -91,7 +86,10 @@ export class TrackService {
   }
 
   deleteTrack(id: string, response: Response) {
-    const trackDeletionResult = trackModel.delete(id, favoritesModel);
+    const trackDeletionResult = this.dataBase.tracks.delete(
+      id,
+      this.dataBase.favorites,
+    );
     switch (trackDeletionResult) {
       case 'invalid uuid':
         response
