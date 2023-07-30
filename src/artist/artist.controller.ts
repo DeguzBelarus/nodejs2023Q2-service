@@ -10,6 +10,9 @@ import {
   UsePipes,
   ValidationPipe,
   HttpStatus,
+  BadRequestException,
+  NotFoundException,
+  HttpCode,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -26,45 +29,36 @@ export class ArtistController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string, @Res() response: Response) {
+  getById(@Param('id') id: string) {
     const getArtistByIdResult = this.artistService.getById(id);
     switch (getArtistByIdResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the artist with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the artist with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(getArtistByIdResult);
+        return getArtistByIdResult;
     }
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createArtist(
-    @Body() createArtistDto: CreateArtistDto,
-    @Res() response: Response,
-  ) {
+  createArtist(@Body() createArtistDto: CreateArtistDto) {
     const artistCreationResult =
       this.artistService.createArtist(createArtistDto);
     switch (artistCreationResult) {
       case 'insufficient data for creation':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to create an artist' });
-        break;
+        throw new BadRequestException({
+          message: 'insufficient data to create an artist',
+        });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid data received',
+        });
       default:
-        response.status(HttpStatus.CREATED).send(artistCreationResult);
+        return artistCreationResult;
     }
   }
 
@@ -73,7 +67,6 @@ export class ArtistController {
   updateArtist(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-    @Res() response: Response,
   ) {
     const artistUpdatingResult = this.artistService.updateArtist(
       id,
@@ -81,46 +74,33 @@ export class ArtistController {
     );
     switch (artistUpdatingResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({ message: 'invalid data received' });
       case 'insufficient data for updating':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to update an artist' });
-        break;
+        throw new BadRequestException({
+          message: 'insufficient data to update an artist',
+        });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the artist with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the artist with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(artistUpdatingResult);
+        return artistUpdatingResult;
     }
   }
 
   @Delete(':id')
-  deleteArtist(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteArtist(@Param('id') id: string) {
     const artistDeletionResult = this.artistService.deleteArtist(id);
     switch (artistDeletionResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
+        throw new NotFoundException({
+          message: 'the user with the specified ID was not found',
+        });
     }
   }
 }
