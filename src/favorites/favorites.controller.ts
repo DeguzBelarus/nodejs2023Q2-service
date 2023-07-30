@@ -1,13 +1,15 @@
 import {
   Controller,
-  Res,
   Param,
   Get,
   Post,
   Delete,
   HttpStatus,
+  UnprocessableEntityException,
+  BadRequestException,
+  NotFoundException,
+  HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { FavoritesService } from './favorites.service';
 
@@ -21,122 +23,89 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  addArtist(@Param('id') id: string, @Res() response: Response) {
+  addArtist(@Param('id') id: string) {
     const addArtistToFavoritesResult = this.favoritesService.addArtist(id);
     switch (addArtistToFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.UNPROCESSABLE_ENTITY)
-          .send({ message: 'the artist with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.CREATED).send();
+        throw new UnprocessableEntityException({
+          message: 'the artist with the specified ID was not found',
+        });
     }
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id') id: string, @Res() response: Response) {
+  addAlbum(@Param('id') id: string) {
     const addAlbumToFavoritesResult = this.favoritesService.addAlbum(id);
     switch (addAlbumToFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.UNPROCESSABLE_ENTITY)
-          .send({ message: 'the album with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.CREATED).send();
+        throw new UnprocessableEntityException({
+          message: 'the album with the specified ID was not found',
+        });
     }
   }
 
   @Post('track/:id')
-  addTrack(@Param('id') id: string, @Res() response: Response) {
+  addTrack(@Param('id') id: string) {
     const addTrackToFavoritesResult = this.favoritesService.addTrack(id);
     switch (addTrackToFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.UNPROCESSABLE_ENTITY)
-          .send({ message: 'the track with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.CREATED).send();
+        throw new UnprocessableEntityException({
+          message: 'the track with the specified ID was not found',
+        });
     }
   }
 
   @Delete('artist/:id')
-  deleteArtist(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteArtist(@Param('id') id: string) {
     const deleteArtistFromFavoritesResult =
       this.favoritesService.deleteArtist(id);
     switch (deleteArtistFromFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity isn't favorite":
-        response.status(HttpStatus.NOT_FOUND).send({
+        throw new NotFoundException({
           message:
             'the artist with the specified ID is not in the favorites list',
         });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
     }
   }
 
   @Delete('album/:id')
-  deleteAlbum(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteAlbum(@Param('id') id: string) {
     const deleteAlbumFromFavoritesResult =
       this.favoritesService.deleteAlbum(id);
     switch (deleteAlbumFromFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity isn't favorite":
-        response.status(HttpStatus.NOT_FOUND).send({
+        throw new NotFoundException({
           message:
             'the album with the specified ID is not in the favorites list',
         });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
     }
   }
 
   @Delete('track/:id')
-  deleteTrack(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteTrack(@Param('id') id: string) {
     const deleteTrackFromFavoritesResult =
       this.favoritesService.deleteTrack(id);
     switch (deleteTrackFromFavoritesResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity isn't favorite":
-        response.status(HttpStatus.NOT_FOUND).send({
+        throw new NotFoundException({
           message:
             'the track with the specified ID is not in the favorites list',
         });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
     }
   }
 }
