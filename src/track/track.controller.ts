@@ -1,6 +1,5 @@
 import {
   Controller,
-  Res,
   Param,
   Body,
   Get,
@@ -10,8 +9,10 @@ import {
   UsePipes,
   ValidationPipe,
   HttpStatus,
+  BadRequestException,
+  NotFoundException,
+  HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { TrackService } from './track.service';
 import { CreateTrackDto, UpdateTrackDto } from 'src/db/dto/track';
@@ -26,100 +27,80 @@ export class TrackController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string, @Res() response: Response) {
+  getById(@Param('id') id: string) {
     const getTrackByIdResult = this.trackService.getById(id);
     switch (getTrackByIdResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the track with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the track with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(getTrackByIdResult);
+        return getTrackByIdResult;
     }
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createTrack(
-    @Body() createTrackDto: CreateTrackDto,
-    @Res() response: Response,
-  ) {
+  createTrack(@Body() createTrackDto: CreateTrackDto) {
     const trackCreationResult = this.trackService.createTrack(createTrackDto);
     switch (trackCreationResult) {
       case 'insufficient data for creation':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to create a track' });
-        break;
+        throw new BadRequestException({
+          message: 'insufficient data to create a track',
+        });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid data received',
+        });
       default:
-        response.status(HttpStatus.CREATED).send(trackCreationResult);
+        return trackCreationResult;
     }
   }
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  updateTrack(
-    @Param('id') id: string,
-    @Body() updateTrackDto: UpdateTrackDto,
-    @Res() response: Response,
-  ) {
+  updateTrack(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
     const trackUpdatingResult = this.trackService.updateTrack(
       id,
       updateTrackDto,
     );
     switch (trackUpdatingResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid uuid',
+        });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid data received',
+        });
       case 'insufficient data for updating':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to update a track' });
-        break;
+        throw new BadRequestException({
+          message: 'insufficient data to update a track',
+        });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the track with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the track with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(trackUpdatingResult);
+        return trackUpdatingResult;
     }
   }
 
   @Delete(':id')
-  deleteTrack(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteTrack(@Param('id') id: string) {
     const trackDeletionResult = this.trackService.deleteTrack(id);
     switch (trackDeletionResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid uuid',
+        });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the track with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
+        throw new NotFoundException({
+          message: 'the track with the specified ID was not found',
+        });
     }
   }
 }
