@@ -9,9 +9,9 @@ import { IDatabase } from './types';
 
 @Injectable()
 export class DatabaseService implements IDatabase {
-  users = new UserModel();
-  artists = new ArtistModel();
-  albums = new AlbumModel();
-  tracks = new TrackModel();
-  favorites = new FavoritesModel();
+  readonly users = new UserModel();
+  readonly artists = new ArtistModel();
+  readonly albums = new AlbumModel();
+  readonly tracks = new TrackModel();
+  readonly favorites = new FavoritesModel();
 }
