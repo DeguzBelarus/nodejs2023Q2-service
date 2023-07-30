@@ -1,6 +1,5 @@
 import {
   Controller,
-  Res,
   Param,
   Body,
   Get,
@@ -10,8 +9,11 @@ import {
   UsePipes,
   ValidationPipe,
   HttpStatus,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+  HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { UserService } from './user.service';
 import { CreateUserDto, UpdatePasswordDto } from 'src/db/dto/user';
@@ -26,46 +28,39 @@ export class UserController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string, @Res() response: Response) {
+  getById(@Param('id') id: string) {
     const getUserByIdResult = this.userService.getById(id);
     switch (getUserByIdResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the user with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(getUserByIdResult);
+        return getUserByIdResult;
     }
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto, @Res() response: Response) {
+  createUser(@Body() createUserDto: CreateUserDto) {
     const userCreationResult = this.userService.createUser(createUserDto);
     switch (userCreationResult) {
       case 'insufficient data for creation':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'insufficient data to create user' });
-        break;
+        throw new BadRequestException({
+          message: 'insufficient data to create user',
+        });
       case 'login already in use':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'specified login name is already in use' });
-        break;
+        throw new BadRequestException({
+          message: 'specified login name is already in use',
+        });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid data received',
+        });
       default:
-        response.status(HttpStatus.CREATED).send(userCreationResult);
+        return userCreationResult;
     }
   }
 
@@ -74,7 +69,6 @@ export class UserController {
   updateUser(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-    @Res() response: Response,
   ) {
     const userUpdatingResult = this.userService.updateUser(
       id,
@@ -82,46 +76,35 @@ export class UserController {
     );
     switch (userUpdatingResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid uuid',
+        });
       case 'invalid data':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid data received' });
-        break;
+        throw new BadRequestException({
+          message: 'invalid data received',
+        });
       case "passwords don't match":
-        response
-          .status(HttpStatus.FORBIDDEN)
-          .send({ message: 'the specified old password is wrong' });
-        break;
+        throw new ForbiddenException({
+          message: 'the specified old password is wrong',
+        });
       case "user doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
-        break;
+        throw new NotFoundException({
+          message: 'the user with the specified ID was not found',
+        });
       default:
-        response.status(HttpStatus.OK).send(userUpdatingResult);
+        return userUpdatingResult;
     }
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string, @Res() response: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteUser(@Param('id') id: string) {
     const userDeletionResult = this.userService.deleteUser(id);
     switch (userDeletionResult) {
       case 'invalid uuid':
-        response
-          .status(HttpStatus.BAD_REQUEST)
-          .send({ message: 'invalid uuid' });
-        break;
+        throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        response
-          .status(HttpStatus.NOT_FOUND)
-          .send({ message: 'the user with the specified ID was not found' });
-        break;
-      case 'success':
-        response.status(HttpStatus.NO_CONTENT).send();
+        throw new NotFoundException({ message: 'invalid uuid' });
     }
   }
 }
