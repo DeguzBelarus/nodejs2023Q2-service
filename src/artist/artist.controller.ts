@@ -1,6 +1,5 @@
 import {
   Controller,
-  Res,
   Param,
   Body,
   Get,
@@ -14,7 +13,6 @@ import {
   NotFoundException,
   HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { ArtistService } from './artist.service';
 import { CreateArtistDto, UpdateArtistDto } from 'src/db/dto/artist';
