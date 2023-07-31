@@ -23,7 +23,7 @@ components:
           example: '12345'
         version:
           type: number
-          example: 1
+          example: 2
           minimum: 1
         createAt:
           type: number
@@ -118,7 +118,7 @@ paths:
     get:
       tags:
         - Users
-      summary: Get all users
+      summary: Gets all users
       description: Gets all users
       responses:
         200:
@@ -132,7 +132,7 @@ paths:
     post:
       tags:
         - Users
-      summary: Create user
+      summary: Creates user
       description: Creates a new user
       requestBody:
         required: true
@@ -160,6 +160,15 @@ paths:
                 $ref: '#/components/schemas/User'
         400:
           description: Bad request (body does not contain required fields or login is already in use or login and password are not strings or empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
+
   /user/{id}:
     parameters:
       - name: id
@@ -170,7 +179,7 @@ paths:
     get:
       tags:
         - Users
-      summary: Get single user by id
+      summary: Gets single user by id
       description: Gets single user by id
       responses:
         200:
@@ -181,12 +190,28 @@ paths:
                 $ref: '#/components/schemas/User'
         400:
           description: Bad request (id (userId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     put:
       tags:
         - Users
-      summary: Update a user's password
+      summary: Updates a user's password
       description: Updates a user's password by ID
       requestBody:
         required: true
@@ -214,28 +239,68 @@ paths:
                 $ref: '#/components/schemas/User'
         400:
           description: Bad request (userId is invalid (not uuid) or oldPassword and newPassword are not strings or empty)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         403:
           description: Field oldPassword is not match user's current password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Users
-      summary: Delete user
+      summary: Deletes user
       description: Deletes user by ID.
       responses:
         204:
           description: The user has been deleted
         400:
           description: Bad request (userId is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /track:
     get:
       tags:
         - Track
-      summary: Get tracks list
+      summary: Gets tracks list
       description: Gets all library tracks list
       responses:
         200:
@@ -249,8 +314,8 @@ paths:
     post:
       tags:
         - Track
-      summary: Add new track
-      description: Add new track information
+      summary: Adds new track
+      description: Adds new track information
       requestBody:
         required: true
         content:
@@ -287,6 +352,14 @@ paths:
                 $ref: '#/components/schemas/Track'
         400:
           description: Bad request (body does not contain required fields or the data type of the fields does not match the required or track name is empty string / duration is equal 0)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /track/{id}:
     parameters:
@@ -299,7 +372,7 @@ paths:
     get:
       tags:
         - Track
-      summary: Get single track by id
+      summary: Gets single track by id
       description: Gets single track by id
       responses:
         200:
@@ -310,13 +383,29 @@ paths:
                 $ref: '#/components/schemas/Track'
         400:
           description: Bad request (id (trackId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Track was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     put:
       tags:
         - Track
-      summary: Update track information
-      description: Update library track information by UUID
+      summary: Updates track information
+      description: Updates library track information by UUID
       requestBody:
         required: true
         content:
@@ -349,26 +438,58 @@ paths:
               $ref: '#/components/schemas/Track'
         400:
           description: Bad request (id (trackId) is invalid (not uuid) or body is empty or the data type of the fields does not match the required or track name is empty string / duration is equal 0)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Track was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Track
-      summary: Delete track
+      summary: Deletes track
       description: Deletes track from library
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (trackId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Track was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /album:
     get:
       tags:
         - Album
-      summary: Get albums list
+      summary: Gets albums list
       description: Gets all library albums list
       responses:
         200:
@@ -383,7 +504,7 @@ paths:
       tags:
         - Album
       summary: Adds new album
-      description: Add new album information
+      description: Adds new album information
       requestBody:
         required: true
         content:
@@ -415,6 +536,14 @@ paths:
                 $ref: '#/components/schemas/Album'
         400:
           description: Bad request (body does not contain required fields or the data type of the fields does not match the required or album name is empty string / year is equal 0)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /album/{id}:
     parameters:
@@ -427,7 +556,7 @@ paths:
     get:
       tags:
         - Album
-      summary: Get single album by id
+      summary: Gets single album by id
       description: Gets single album by id
       responses:
         200:
@@ -438,13 +567,29 @@ paths:
                 $ref: '#/components/schemas/Album'
         400:
           description: Bad request(id (albumId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Album was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     put:
       tags:
         - Album
       summary: Updates album information
-      description: Update library album information by UUID
+      description: Updates library album information by UUID
       requestBody:
         required: true
         content:
@@ -470,27 +615,59 @@ paths:
                 $ref: '#/components/schemas/Album'
         400:
           description: Bad request (id (albumId) is invalid (not uuid) or body is empty or the data type of the fields does not match the required or album name is empty string / duration is equal 0)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Album was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Album
       summary: Deletes album
-      description: Delete album from library
+      description: Deletes album from library
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (albumId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Album was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /artist:
     get:
       tags:
         - Artist
       summary: Gets all artists
-      description: Get all artists
+      description: Gets all artists
       responses:
         200:
           description: Successful operation
@@ -504,7 +681,7 @@ paths:
       tags:
         - Artist
       summary: Adds new artist
-      description: Add new artist
+      description: Adds new artist
       requestBody:
         required: true
         content:
@@ -530,6 +707,14 @@ paths:
                 $ref: '#/components/schemas/Artist'
         400:
           description: Bad request (body does not contain required fields or the data type of the fields does not match the required or artist name is empty string)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /artist/{id}:
     parameters:
@@ -543,7 +728,7 @@ paths:
       tags:
         - Artist
       summary: Gets single artist by id
-      description: Get single artist by id
+      description: Gets single artist by id
       responses:
         200:
           description: Successful operation
@@ -553,13 +738,29 @@ paths:
                 $ref: '#/components/schemas/Artist'
         400:
           description: Bad request (id (artistId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Artist was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     put:
       tags:
         - Artist
       summary: Updates artist information
-      description: Update artist information by UUID
+      description: Updates artist information by UUID
       requestBody:
         required: true
         content:
@@ -582,26 +783,58 @@ paths:
                 $ref: '#/components/schemas/Artist'
         400:
           description: Bad request (id (artistId) is invalid (not uuid) or body is empty or the data type of the fields does not match the required or artist name is empty string)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Artist was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Artist
       summary: Deletes artist
-      description: Delete artist from library
+      description: Deletes artist from library
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (artistId) is invalid (not uuid))
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Artist was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /favs:
     get:
       tags:
         - Favorites
-      summary: Get all favorites
+      summary: Gets all favorites
       description: Gets all favorites artists, albums and tracks
       responses:
         200:
@@ -623,58 +856,58 @@ paths:
       tags:
         - Favorites
       summary: Adds track to the favorites
-      description: Add track to the favorites
+      description: Adds track to the favorites
       responses:
         201:
           description: Added successfully
         400:
           description: Bad request (id (track) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         422:
           description: Track with id doesn't exist.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Favorites
       summary: Deletes track from favorites
-      description: Delete track from favorites
+      description: Deletes track from favorites
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (trackId) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Track was not found.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /favs/album/{id}:
     parameters:
@@ -688,58 +921,58 @@ paths:
       tags:
         - Favorites
       summary: Adds album to the favorites
-      description: Add album to the favorites
+      description: Adds album to the favorites
       responses:
         201:
           description: Added successfully
         400:
           description: Bad request (id (albumId) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         422:
           description: Album with id doesn't exist.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Favorites
       summary: Deletes album from favorites
-      description: Delete album from favorites
+      description: Deletes album from favorites
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (albumId) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Album was not found.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
 
   /favs/artist/{id}:
     parameters:
@@ -753,55 +986,55 @@ paths:
       tags:
         - Favorites
       summary: Adds artist to the favorites
-      description: Add artist to the favorites
+      description: Adds artist to the favorites
       responses:
         201:
           description: Added successfully
         400:
           description: Bad request (id (artistId) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         422:
           description: Artist with id doesn't exist.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
     delete:
       tags:
         - Favorites
       summary: Deletes artist from favorites
-      description: Delete artist from favorites
+      description: Deletes artist from favorites
       responses:
         204:
           description: Deleted successfully
         400:
           description: Bad request (id (artistId) is invalid (not uuid))
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
         404:
           description: Artist was not found.
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  message: 'Message content'
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Error message content'
