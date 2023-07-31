@@ -45,6 +45,7 @@ export class AlbumModel implements IAlbumModel {
     )
       return 'invalid data';
     if (!albumData.name.length) return 'invalid data';
+    if (albumData.year === 0) return 'invalid data';
 
     if (typeof albumData.artistId === 'string') {
       const foundArtist = artistsList.findById(albumData.artistId);
@@ -91,6 +92,8 @@ export class AlbumModel implements IAlbumModel {
     )
       return 'invalid data';
     if (typeof albumData.name === 'string' && !albumData.name.length)
+      return 'invalid data';
+    if (typeof albumData.year === 'number' && albumData.year === 0)
       return 'invalid data';
     if (typeof albumData.artistId === 'string') {
       const foundArtist = artistsList.findById(albumData.artistId);

@@ -50,6 +50,7 @@ export class TrackModel implements ITrackModel {
     )
       return 'invalid data';
     if (!trackData.name.length) return 'invalid data';
+    if (trackData.duration === 0) return 'invalid data';
 
     if (typeof trackData.artistId === 'string') {
       const foundArtist = artistsList.findById(trackData.artistId);
@@ -111,7 +112,10 @@ export class TrackModel implements ITrackModel {
         trackData.albumId !== null)
     )
       return 'invalid data';
-    if (!trackData.name.length) return 'invalid data';
+    if (typeof trackData.name === 'string' && !trackData.name.length)
+      return 'invalid data';
+    if (typeof trackData.duration === 'number' && trackData.duration === 0)
+      return 'invalid data';
 
     if (typeof trackData.artistId === 'string') {
       const foundArtist = artistsList.findById(trackData.artistId);
