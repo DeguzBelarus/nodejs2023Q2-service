@@ -47,4 +47,12 @@ a. Download the Postman app: https://www.postman.com/
 b. Install the Postman and make request according to the task routes
 ```
 
+## 8. Check the OpenAPI
+
+```plaintext
+a. Open api.yaml file in the doc folder and copy its content 
+b. Go to the Swagger Editor site: https://editor-next.swagger.io/ and paste the copied content
+c. Check the generated document
+```
+
 ### Thank you for reading and checking
