@@ -23,8 +23,10 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  addArtist(@Param('id') id: string) {
-    const addArtistToFavoritesResult = this.favoritesService.addArtist(id);
+  async addArtist(@Param('id') id: string) {
+    const addArtistToFavoritesResult = await this.favoritesService.addArtist(
+      id,
+    );
     switch (addArtistToFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -36,8 +38,8 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id') id: string) {
-    const addAlbumToFavoritesResult = this.favoritesService.addAlbum(id);
+  async addAlbum(@Param('id') id: string) {
+    const addAlbumToFavoritesResult = await this.favoritesService.addAlbum(id);
     switch (addAlbumToFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -49,8 +51,8 @@ export class FavoritesController {
   }
 
   @Post('track/:id')
-  addTrack(@Param('id') id: string) {
-    const addTrackToFavoritesResult = this.favoritesService.addTrack(id);
+  async addTrack(@Param('id') id: string) {
+    const addTrackToFavoritesResult = await this.favoritesService.addTrack(id);
     switch (addTrackToFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -63,9 +65,9 @@ export class FavoritesController {
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id') id: string) {
+  async deleteArtist(@Param('id') id: string) {
     const deleteArtistFromFavoritesResult =
-      this.favoritesService.deleteArtist(id);
+      await this.favoritesService.deleteArtist(id);
     switch (deleteArtistFromFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -79,9 +81,9 @@ export class FavoritesController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id') id: string) {
+  async deleteAlbum(@Param('id') id: string) {
     const deleteAlbumFromFavoritesResult =
-      this.favoritesService.deleteAlbum(id);
+      await this.favoritesService.deleteAlbum(id);
     switch (deleteAlbumFromFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -95,9 +97,9 @@ export class FavoritesController {
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(@Param('id') id: string) {
+  async deleteTrack(@Param('id') id: string) {
     const deleteTrackFromFavoritesResult =
-      this.favoritesService.deleteTrack(id);
+      await this.favoritesService.deleteTrack(id);
     switch (deleteTrackFromFavoritesResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });

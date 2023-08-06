@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { ArtistService } from './artist.service';
-import { CreateArtistDto, UpdateArtistDto } from 'src/db/dto/artist';
+import { CreateArtistDto, UpdateArtistDto } from 'src/dtoValidator/dto/artist';
 
 @Controller('artist')
 export class ArtistController {
@@ -27,8 +27,8 @@ export class ArtistController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    const getArtistByIdResult = this.artistService.getById(id);
+  async getById(@Param('id') id: string) {
+    const getArtistByIdResult = await this.artistService.getById(id);
     switch (getArtistByIdResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -43,9 +43,10 @@ export class ArtistController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createArtist(@Body() createArtistDto: CreateArtistDto) {
-    const artistCreationResult =
-      this.artistService.createArtist(createArtistDto);
+  async createArtist(@Body() createArtistDto: CreateArtistDto) {
+    const artistCreationResult = await this.artistService.createArtist(
+      createArtistDto,
+    );
     switch (artistCreationResult) {
       case 'insufficient data for creation':
         throw new BadRequestException({
@@ -62,11 +63,11 @@ export class ArtistController {
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  updateArtist(
+  async updateArtist(
     @Param('id') id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const artistUpdatingResult = this.artistService.updateArtist(
+    const artistUpdatingResult = await this.artistService.updateArtist(
       id,
       updateArtistDto,
     );
@@ -90,14 +91,14 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id') id: string) {
-    const artistDeletionResult = this.artistService.deleteArtist(id);
+  async deleteArtist(@Param('id') id: string) {
+    const artistDeletionResult = await this.artistService.deleteArtist(id);
     switch (artistDeletionResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
         throw new NotFoundException({
-          message: 'the user with the specified ID was not found',
+          message: 'the artist with the specified ID was not found',
         });
     }
   }

@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { AlbumService } from './album.service';
-import { CreateAlbumDto, UpdateAlbumDto } from 'src/db/dto/album';
+import { CreateAlbumDto, UpdateAlbumDto } from 'src/dtoValidator/dto/album';
 
 @Controller('album')
 export class AlbumController {
@@ -27,8 +27,8 @@ export class AlbumController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    const getAlbumByIdResult = this.albumService.getById(id);
+  async getById(@Param('id') id: string) {
+    const getAlbumByIdResult = await this.albumService.getById(id);
     switch (getAlbumByIdResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -43,8 +43,10 @@ export class AlbumController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
-    const albumCreationResult = this.albumService.createAlbum(createAlbumDto);
+  async createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
+    const albumCreationResult = await this.albumService.createAlbum(
+      createAlbumDto,
+    );
     switch (albumCreationResult) {
       case 'insufficient data for creation':
         throw new BadRequestException({
@@ -61,8 +63,11 @@ export class AlbumController {
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  updateAlbum(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    const albumUpdatingResult = this.albumService.updateAlbum(
+  async updateAlbum(
+    @Param('id') id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
+    const albumUpdatingResult = await this.albumService.updateAlbum(
       id,
       updateAlbumDto,
     );
@@ -90,8 +95,8 @@ export class AlbumController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id') id: string) {
-    const albumDeletionResult = this.albumService.deleteAlbum(id);
+  async deleteAlbum(@Param('id') id: string) {
+    const albumDeletionResult = await this.albumService.deleteAlbum(id);
     switch (albumDeletionResult) {
       case 'invalid uuid':
         throw new BadRequestException({

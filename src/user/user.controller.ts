@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
-import { CreateUserDto, UpdatePasswordDto } from 'src/db/dto/user';
+import { CreateUserDto, UpdatePasswordDto } from 'src/dtoValidator/dto/user';
 
 @Controller('user')
 export class UserController {
@@ -28,8 +28,8 @@ export class UserController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    const getUserByIdResult = this.userService.getById(id);
+  async getById(@Param('id') id: string) {
+    const getUserByIdResult = await this.userService.getById(id);
     switch (getUserByIdResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -44,8 +44,8 @@ export class UserController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    const userCreationResult = this.userService.createUser(createUserDto);
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    const userCreationResult = await this.userService.createUser(createUserDto);
     switch (userCreationResult) {
       case 'insufficient data for creation':
         throw new BadRequestException({
@@ -66,11 +66,11 @@ export class UserController {
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const userUpdatingResult = this.userService.updateUser(
+    const userUpdatingResult = await this.userService.updateUser(
       id,
       updatePasswordDto,
     );
@@ -98,8 +98,8 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('id') id: string) {
-    const userDeletionResult = this.userService.deleteUser(id);
+  async deleteUser(@Param('id') id: string) {
+    const userDeletionResult = await this.userService.deleteUser(id);
     switch (userDeletionResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });

@@ -1,36 +1,103 @@
 import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { validate as uuidValidate } from 'uuid';
 
-import { DatabaseService } from 'src/db/db.service';
+import {
+  FavoriteAlbumsEntity,
+  FavoriteArtistsEntity,
+  FavoriteTracksEntity,
+} from './favorites.entity';
+import { ArtistEntity } from 'src/artist/artist.entity';
+import { AlbumEntity } from 'src/album/album.entity';
+import { TrackEntity } from 'src/track/track.entity';
+import {
+  AddFavoriteResultType,
+  DeleteFavoriteResultType,
+} from 'src/types/types';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly dataBase: DatabaseService) {}
+  constructor(
+    @InjectRepository(FavoriteArtistsEntity)
+    private readonly favoriteArtistsRepository: Repository<FavoriteArtistsEntity>,
+    @InjectRepository(FavoriteAlbumsEntity)
+    private readonly favoriteAlbumsRepository: Repository<FavoriteAlbumsEntity>,
+    @InjectRepository(FavoriteTracksEntity)
+    private readonly favoriteTracksRepository: Repository<FavoriteTracksEntity>,
+    @InjectRepository(ArtistEntity)
+    private readonly artistsRepository: Repository<ArtistEntity>,
+    @InjectRepository(AlbumEntity)
+    private readonly albumsRepository: Repository<AlbumEntity>,
+    @InjectRepository(TrackEntity)
+    private readonly trackRepository: Repository<TrackEntity>,
+  ) {}
 
-  get() {
-    return this.dataBase.favorites.get();
+  async get() {
+    const favoriteArtists = await this.favoriteArtistsRepository.find({
+      relations: { artist: true },
+    });
+    const favoriteAlbums = await this.favoriteAlbumsRepository.find({
+      relations: { album: true },
+    });
+    const favoriteTracks = await this.favoriteTracksRepository.find({
+      relations: { track: true },
+    });
+    return {
+      artists: favoriteArtists.map((favoriteArtist) => favoriteArtist.artist),
+      albums: favoriteAlbums.map((favoriteAlbum) => favoriteAlbum.album),
+      tracks: favoriteTracks.map((favoriteTrack) => favoriteTrack.track),
+    };
   }
 
-  addArtist(id: string) {
-    return this.dataBase.favorites.addArtist(id, this.dataBase.artists);
+  async addArtist(id: string): Promise<AddFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundArtist = await this.artistsRepository.findOneBy({ id });
+    if (!foundArtist) return "entity doesn't exist";
+    await this.favoriteArtistsRepository.save({ artistId: id });
+    return 'success';
   }
 
-  addAlbum(id: string) {
-    return this.dataBase.favorites.addAlbum(id, this.dataBase.albums);
+  async addAlbum(id: string): Promise<AddFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundAlbum = await this.albumsRepository.findOneBy({ id });
+    if (!foundAlbum) return "entity doesn't exist";
+    await this.favoriteAlbumsRepository.save({ albumId: id });
+    return 'success';
   }
 
-  addTrack(id: string) {
-    return this.dataBase.favorites.addTrack(id, this.dataBase.tracks);
+  async addTrack(id: string): Promise<AddFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundTrack = await this.trackRepository.findOneBy({ id });
+    if (!foundTrack) return "entity doesn't exist";
+    await this.favoriteTracksRepository.save({ trackId: id });
+    return 'success';
   }
 
-  deleteArtist(id: string) {
-    return this.dataBase.favorites.deleteArtist(id);
+  async deleteArtist(id: string): Promise<DeleteFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundFavoriteArtist = await this.favoriteArtistsRepository.findOneBy({
+      artistId: id,
+    });
+    if (!foundFavoriteArtist) return "entity isn't favorite";
+    await foundFavoriteArtist.remove();
   }
 
-  deleteAlbum(id: string) {
-    return this.dataBase.favorites.deleteAlbum(id);
+  async deleteAlbum(id: string): Promise<DeleteFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundFavoriteAlbum = await this.favoriteAlbumsRepository.findOneBy({
+      albumId: id,
+    });
+    if (!foundFavoriteAlbum) return "entity isn't favorite";
+    await foundFavoriteAlbum.remove();
   }
 
-  deleteTrack(id: string) {
-    return this.dataBase.favorites.deleteTrack(id);
+  async deleteTrack(id: string): Promise<DeleteFavoriteResultType> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundFavoriteTrack = await this.favoriteTracksRepository.findOneBy({
+      trackId: id,
+    });
+    if (!foundFavoriteTrack) return "entity isn't favorite";
+    await foundFavoriteTrack.remove();
   }
 }

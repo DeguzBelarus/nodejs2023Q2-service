@@ -1,0 +1,15 @@
+version: 2.19.1
+
+services:
+  db:
+    container_name: ${DB_CONTAINER_NAME}
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      - DB_USER=${TYPEORM_USERNAME}
+      - DB_PASSWORD=${TYPEORM_PASSWORD}
+      - DB_NAME=${TYPEORM_DATABASE}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - ${TYPEORM_PORT}:${TYPEORM_PORT}

@@ -1,4 +1,4 @@
-import { IUserSafe } from '../types';
+import { IUserSafe } from 'src/types/types';
 
 export class UserSafe implements IUserSafe {
   id: string;

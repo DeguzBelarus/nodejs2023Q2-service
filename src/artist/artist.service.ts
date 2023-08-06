@@ -1,34 +1,67 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { validate as uuidValidate } from 'uuid';
 
-import { ICreateArtistDto, IUpdateArtistDto } from 'src/types/types';
-import { DatabaseService } from 'src/db/db.service';
+import {
+  CreateEntityResultType,
+  ICreateArtistDto,
+  IUpdateArtistDto,
+  UpdateEntityResultType,
+} from 'src/types/types';
+import { ArtistEntity } from 'src/artist/artist.entity';
+import { DtoArtistValidatorService } from 'src/dtoValidator/services/dtoArtistValidator.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly dataBase: DatabaseService) {}
+  constructor(
+    private readonly dtoArtistValidator: DtoArtistValidatorService,
+    @InjectRepository(ArtistEntity)
+    private readonly artistRepository: Repository<ArtistEntity>,
+  ) {}
 
-  getAll() {
-    return this.dataBase.artists.findAll();
+  async getAll() {
+    return await this.artistRepository.find();
   }
 
-  getById(id: string) {
-    return this.dataBase.artists.findById(id);
+  async getById(id: string) {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundArtist = await this.artistRepository.findOneBy({ id });
+    return foundArtist ? foundArtist : "entity doesn't exist";
   }
 
-  createArtist(createArtistDto: ICreateArtistDto) {
-    return this.dataBase.artists.create(createArtistDto);
+  async createArtist(
+    createArtistDto: ICreateArtistDto,
+  ): Promise<CreateEntityResultType<ArtistEntity>> {
+    const createArtistDtoValidationResult =
+      this.dtoArtistValidator.createArtistDtoValidate(createArtistDto);
+    if (typeof createArtistDtoValidationResult === 'string') {
+      return createArtistDtoValidationResult;
+    }
+    return await this.artistRepository.save(createArtistDto);
   }
 
-  updateArtist(id: string, updateArtistDto: IUpdateArtistDto) {
-    return this.dataBase.artists.update(id, updateArtistDto);
+  async updateArtist(
+    id: string,
+    updateArtistDto: IUpdateArtistDto,
+  ): Promise<UpdateEntityResultType<ArtistEntity>> {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const updateArtistDtoValidationResult =
+      this.dtoArtistValidator.updateArtistDtoValidate(updateArtistDto);
+    if (typeof updateArtistDtoValidationResult === 'string') {
+      return updateArtistDtoValidationResult;
+    }
+    const foundArtist = await this.artistRepository.findOneBy({ id });
+    if (!foundArtist) return "entity doesn't exist";
+    await this.artistRepository.update(id, updateArtistDto);
+    return await this.artistRepository.findOneBy({ id });
   }
 
-  deleteArtist(id: string) {
-    return this.dataBase.artists.delete(
-      id,
-      this.dataBase.tracks,
-      this.dataBase.albums,
-      this.dataBase.favorites,
-    );
+  async deleteArtist(id: string) {
+    if (!uuidValidate(id)) return 'invalid uuid';
+    const foundArtist = await this.artistRepository.findOneBy({ id });
+    if (!foundArtist) return "entity doesn't exist";
+    await foundArtist.remove();
+    return 'success';
   }
 }

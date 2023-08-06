@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { TrackService } from './track.service';
-import { CreateTrackDto, UpdateTrackDto } from 'src/db/dto/track';
+import { CreateTrackDto, UpdateTrackDto } from 'src/dtoValidator/dto/track';
 
 @Controller('track')
 export class TrackController {
@@ -27,8 +27,8 @@ export class TrackController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    const getTrackByIdResult = this.trackService.getById(id);
+  async getById(@Param('id') id: string) {
+    const getTrackByIdResult = await this.trackService.getById(id);
     switch (getTrackByIdResult) {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
@@ -43,8 +43,10 @@ export class TrackController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  createTrack(@Body() createTrackDto: CreateTrackDto) {
-    const trackCreationResult = this.trackService.createTrack(createTrackDto);
+  async createTrack(@Body() createTrackDto: CreateTrackDto) {
+    const trackCreationResult = await this.trackService.createTrack(
+      createTrackDto,
+    );
     switch (trackCreationResult) {
       case 'insufficient data for creation':
         throw new BadRequestException({
@@ -61,8 +63,11 @@ export class TrackController {
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  updateTrack(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    const trackUpdatingResult = this.trackService.updateTrack(
+  async updateTrack(
+    @Param('id') id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
+    const trackUpdatingResult = await this.trackService.updateTrack(
       id,
       updateTrackDto,
     );
@@ -90,8 +95,8 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(@Param('id') id: string) {
-    const trackDeletionResult = this.trackService.deleteTrack(id);
+  async deleteTrack(@Param('id') id: string) {
+    const trackDeletionResult = await this.trackService.deleteTrack(id);
     switch (trackDeletionResult) {
       case 'invalid uuid':
         throw new BadRequestException({
