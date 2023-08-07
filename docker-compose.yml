@@ -1,15 +1,38 @@
-version: 2.19.1
+version: '3.9'
 
 services:
-  db:
-    container_name: ${DB_CONTAINER_NAME}
-    image: postgres:15.3-alpine3.18
-    restart: always
+  main:
+    image: ${MAIN_IMAGE_NAME}
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ${DOCKER_MAIN_FILE_NAME}
+    environment: 
+      TYPEORM_HOST_DEV: ${DOCKER_DB_HOST_DEV}
+      TYPEORM_USERNAME: ${DOCKER_DB_USERNAME}
+      TYPEORM_PASSWORD: ${DOCKER_DB_PASSWORD}
+      TYPEORM_DATABASE: ${DOCKER_DB_NAME}
+      TYPEORM_PORT: ${DOCKER_DB_PORT}
+    ports:
+      - ${PORT}:${PORT}
+    command: npm run start:dev
+    depends_on:
+      - postgres
+
+  postgres:
+    image: ${DB_IMAGE_NAME}
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ${DOCKER_DB_FILE_NAME}
     environment:
-      - DB_USER=${TYPEORM_USERNAME}
-      - DB_PASSWORD=${TYPEORM_PASSWORD}
-      - DB_NAME=${TYPEORM_DATABASE}
+      POSTGRES_USER: ${DOCKER_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD}
+      POSTGRES_DB: ${DOCKER_DB_NAME}
+    ports:
+      - ${DOCKER_DB_PORT}:${DOCKER_DB_PORT}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
-    ports:
-      - ${TYPEORM_PORT}:${TYPEORM_PORT}
+
+volumes:
+  pgdata:
