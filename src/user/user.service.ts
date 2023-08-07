@@ -13,7 +13,7 @@ import {
   UpdateUserPasswordResultType,
 } from 'src/types/types';
 import { UserEntity } from 'src/user/user.entity';
-import { UserSafe } from './user.schema';
+import { UserSafe } from './user-safe.schema';
 import { DtoUserValidatorService } from 'src/dtoValidator/services/dtoUserValidator.service';
 
 @Injectable()
