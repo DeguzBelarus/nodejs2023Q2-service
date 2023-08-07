@@ -17,7 +17,7 @@ import { TrackModule } from './track/track.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: configService.get<'aurora-mysql'>('TYPEORM_CONNECTION'),
-        host: 'localhost',
+        host: configService.get<string>('TYPEORM_HOST_DEV'),
         port: configService.get<number>('TYPEORM_PORT'),
         username: configService.get<string>('TYPEORM_USERNAME'),
         password: configService.get<string>('TYPEORM_PASSWORD'),
