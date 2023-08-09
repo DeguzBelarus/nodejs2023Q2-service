@@ -15,6 +15,8 @@ services:
       TYPEORM_PORT: ${DOCKER_DB_PORT}
     ports:
       - ${PORT}:${PORT}
+    volumes:
+      - ./src:/app/src
     command: npm run start:dev
     depends_on:
       - postgres
@@ -36,13 +38,25 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./pglogs:/logs:z
-    command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/logs", "-c", "log_filename=postgresql.log", "-c", "log_statement=all"]
+    command:
+      [
+        'postgres',
+        '-c',
+        'logging_collector=on',
+        '-c',
+        'log_directory=/logs',
+        '-c',
+        'log_filename=postgresql.log',
+        '-c',
+        'log_statement=all',
+      ]
     networks:
       - home-library-network
 
 volumes:
   pgdata:
   pglogs:
+  src:
 
 networks:
-    home-library-network:
+  home-library-network:
