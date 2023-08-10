@@ -91,14 +91,20 @@ f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the
 run npm run docker-compose down
 ```
 
-## 10. Check the application images on Docker Hub
+## 10. Check the vulnerabilities scanning script
+
+```plaintext
+run npm run docker:vulnerabilities
+```
+
+## 11. Check the application images on Docker Hub
 
 ```plaintext
 a. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
 b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
 ```
 
-## 11. Optionally check the app with pgAdmin
+## 12. Optionally check the app with pgAdmin
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
