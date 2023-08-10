@@ -51,7 +51,7 @@ TOKEN_REFRESH_EXPIRE_TIME=24h
 run npm install
 ```
 
-## 5. Run docker build via docker-compose (Docker Desktop should dbe run)
+## 5. Run docker build via docker-compose (Docker Desktop should be run)
 
 ```plaintext
 run npm run docker-compose build
