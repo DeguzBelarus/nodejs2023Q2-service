@@ -82,6 +82,7 @@ b. Install the Postman and make request according to the task routes
 c. Database should work without pgAdmin installation
 d. Data is stored in the volume (pgdata folder)
 e. Database logs are stored in the volume (pglogs folder)
+f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the app should be restarted
 ```
 
 ## 9. Turn off docker compose
