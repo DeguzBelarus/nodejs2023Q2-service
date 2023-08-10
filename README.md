@@ -79,7 +79,9 @@ run npm run test
 ```plaintext
 a. Download the Postman app: https://www.postman.com/
 b. Install the Postman and make request according to the task routes
-c. Database should work without pgAdmin installation and data is stored in the volume
+c. Database should work without pgAdmin installation
+d. Data is stored in the volume (pgdata folder)
+e. Database logs are stored in the volume (pglogs folder)
 ```
 
 ## 9. Turn off docker compose
