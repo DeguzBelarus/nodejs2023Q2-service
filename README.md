@@ -63,9 +63,9 @@ run npm run docker-compose build
 run npm run docker-compose up
 
 database should be connected or do the following steps:
-a. wait few seconds
-b. run npm run docker-compose down
-c. run npm run docker-compose up
+a. Wait few seconds
+b. Run npm run docker-compose down
+c. Run npm run docker-compose up
 ```
 
 ## 7. Run tests (should be passed 67 from 67 tests)
@@ -91,16 +91,16 @@ run npm run docker-compose down
 ## 10. Check the application images on Docker Hub
 
 ```plaintext
-a. visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
-b. visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
+a. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
+b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
 ```
 
 ## 11. Optionally check the app with pgAdmin
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
-b. run npm run start:dev
-c. repeat repeat the points №№7-8
+b. Run npm run start:dev
+c. Repeat the points №№7-8
 ```
 
 ### Thank you for reading and checking
