@@ -108,8 +108,15 @@ b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/genera
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
-b. Run npm run start:dev
-c. Repeat the points №№7-8
+b. Run database migration npm run migration:run
+c. Run npm run start:dev
+d. Repeat the points №№7-8
+```
+
+### Notes
+
+```plaintext
+a. Migrations for the database are stored in the src/db/migrations folder 
 ```
 
 ### Thank you for reading and checking
