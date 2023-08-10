@@ -61,17 +61,17 @@ run npm run docker-compose build
 
 ```plaintext
 run npm run docker-compose up
+
+database should be connected or do the following steps:
+a. wait few seconds
+b. run npm run docker-compose down
+c. run npm run docker-compose up
 ```
 
 ## 7. Run tests (should be passed 67 from 67 tests)
 
 ```plaintext
 run npm run test
-
-database should be connected or do the following steps:
-a. wait few seconds
-b. run npm run docker-compose down
-c. run npm run docker-compose up
 ```
 
 ## 8. Check the app
