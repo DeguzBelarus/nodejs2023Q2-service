@@ -21,7 +21,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - home-library-network
+      - ${DOCKER_NETWORK_NAME}
 
   postgres:
     image: ${DB_IMAGE_NAME}
@@ -51,7 +51,7 @@ services:
         'log_statement=all',
       ]
     networks:
-      - home-library-network
+      - ${DOCKER_NETWORK_NAME}
 
 volumes:
   pgdata:
