@@ -1,4 +1,4 @@
-# Home Library Service (with ES6 classes database)
+# Home Library Service (with PostgreSQL database via TypeORM and Docker)
 
 ## Instructions
 
