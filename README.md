@@ -82,7 +82,7 @@ b. Install the Postman and make request according to the task routes
 c. Database should work without pgAdmin installation
 d. Data is stored in the volume (pgdata folder)
 e. Database logs are stored in the volume (pglogs folder)
-f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the app should be restarted
+f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the app should restart on every change
 ```
 
 ## 9. Turn off docker compose
@@ -97,7 +97,7 @@ run npm run docker-compose down
 run npm run docker:vulnerabilities
 ```
 
-## 11. Check the application images on Docker Hub
+## 11. Check the application images uploaded on Docker Hub
 
 ```plaintext
 a. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
