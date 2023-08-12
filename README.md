@@ -62,18 +62,23 @@ run npm run docker-compose build
 run npm run docker-compose up
 
 database should be connected or do the following steps:
-a. Wait few seconds
-b. Run npm run docker-compose down
-c. Run npm run docker-compose up
+a. Kill process via CTRL+C
+b. Wait few seconds
+c. Run npm run docker-compose down
+d. Run npm run docker-compose up
 ```
 
-## 7. Run tests (should be passed 67 from 67 tests)
+## 7. Check volumes
+
+look through ./pgdata and ./pglogs folders
+
+## 8. Run tests (should be passed 67 from 67 tests)
 
 ```plaintext
 run npm run test
 ```
 
-## 8. Check the app
+## 9. Check the app
 
 ```plaintext
 a. Download the Postman app: https://www.postman.com/
@@ -84,26 +89,26 @@ e. Database logs are stored in the volume (pglogs folder)
 f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the app should restart on every change
 ```
 
-## 9. Turn off docker compose
+## 10. Turn off docker compose
 
 ```plaintext
 run npm run docker-compose down
 ```
 
-## 10. Check the vulnerabilities scanning script
+## 11. Check the vulnerabilities scanning script
 
 ```plaintext
 run npm run docker:vulnerabilities
 ```
 
-## 11. Check the application images uploaded on Docker Hub
+## 12. Check the application images uploaded on Docker Hub
 
 ```plaintext
 a. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
 b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
 ```
 
-## 12. Optionally check the app with pgAdmin
+## 13. Optionally check the app with pgAdmin
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
