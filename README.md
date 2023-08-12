@@ -104,8 +104,9 @@ run npm run docker:vulnerabilities
 ## 12. Check the application images uploaded on Docker Hub
 
 ```plaintext
-a. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
+a. Register on https://hub.docker.com/
 b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
+c. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
 ```
 
 ## 13. Optionally check the app with pgAdmin
