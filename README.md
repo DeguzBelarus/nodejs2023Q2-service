@@ -30,7 +30,6 @@ MAIN_IMAGE_NAME=home-library-main
 DB_IMAGE_NAME=home-library-db
 DOCKER_MAIN_FILE_NAME=Dockerfile
 DOCKER_DB_FILE_NAME=DockerfileDB
-DOCKER_NETWORK_NAME=home-library-network
 DOCKER_DB_HOST_DEV=postgres
 DOCKER_DB_USERNAME=postgres
 DOCKER_DB_NAME=postgres
