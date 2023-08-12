@@ -55,8 +55,12 @@ services:
 
 volumes:
   pgdata:
+    driver: local
   pglogs:
+    driver: local
   src:
+    driver: local
 
 networks:
   home-library-network:
+    driver: bridge

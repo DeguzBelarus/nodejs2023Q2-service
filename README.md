@@ -63,7 +63,7 @@ run npm run docker-compose up
 
 database should be connected or do the following steps:
 a. Kill process via CTRL+C
-b. Wait few seconds
+b. Try to wait few seconds (main point), if this doesn't help - move to the point c
 c. Run npm run docker-compose down
 d. Run npm run docker-compose up
 ```
