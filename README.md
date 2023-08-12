@@ -115,7 +115,7 @@ c. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general 
 a. Setup and configure pgAdmin and configure database with it
 b. Run database migration npm run migration:run
 c. Run npm run start:dev
-d. Repeat the points №№7-8
+d. Repeat the points №№8-9
 ```
 
 ### Notes
