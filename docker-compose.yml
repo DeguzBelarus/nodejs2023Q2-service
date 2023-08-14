@@ -1,0 +1,66 @@
+version: '3.6'
+
+services:
+  main:
+    image: ${MAIN_IMAGE_NAME}
+    restart: always
+    build:
+      context: .
+      dockerfile: ${DOCKER_MAIN_FILE_NAME}
+    environment:
+      TYPEORM_HOST_DEV: ${DOCKER_DB_HOST_DEV}
+      TYPEORM_USERNAME: ${DOCKER_DB_USERNAME}
+      TYPEORM_PASSWORD: ${DOCKER_DB_PASSWORD}
+      TYPEORM_DATABASE: ${DOCKER_DB_NAME}
+      TYPEORM_PORT: ${DOCKER_DB_PORT}
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./src:/app/src
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    networks:
+      - home-library-network
+
+  postgres:
+    image: ${DB_IMAGE_NAME}
+    restart: always
+    build:
+      context: .
+      dockerfile: ${DOCKER_DB_FILE_NAME}
+    environment:
+      POSTGRES_USER: ${DOCKER_DB_USERNAME}
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD}
+      POSTGRES_DB: ${DOCKER_DB_NAME}
+    ports:
+      - ${DOCKER_DB_PORT}:${DOCKER_DB_PORT}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./pglogs:/logs:z
+    command:
+      [
+        'postgres',
+        '-c',
+        'logging_collector=on',
+        '-c',
+        'log_directory=/logs',
+        '-c',
+        'log_filename=postgresql.log',
+        '-c',
+        'log_statement=all',
+      ]
+    networks:
+      - home-library-network
+
+volumes:
+  pgdata:
+    driver: local
+  pglogs:
+    driver: local
+  src:
+    driver: local
+
+networks:
+  home-library-network:
+    driver: bridge

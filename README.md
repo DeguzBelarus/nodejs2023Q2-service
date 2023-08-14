@@ -1,72 +1,126 @@
-# Home Library Service
+# Home Library Service (with PostgreSQL database via TypeORM and Docker)
+
+## Instructions
 
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+1. Install the Docker Desktop application from <https://www.docker.com/products/docker-desktop/>
+2. (Optionally) Install the PostgreSQL with pgAmin from <https://www.postgresql.org/download/>
 
-## Downloading
+## 1. Clone the repository
 
-```
-git clone {repository URL}
-```
-
-## Installing NPM modules
-
-```
-npm install
+```plaintext
+git clone https://github.com/DeguzBelarus/nodejs2023Q2-service.git
 ```
 
-## Running application
+## 2. Go to the project folder and chose the develop-part-2 branch in the git bash terminal
 
-```
-npm start
-```
+## 3. Create .env file with following content
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+```plaintext
+PORT=4000
 
-## Testing
+TYPEORM_HOST_DEV=localhost
+TYPEORM_USERNAME=postgres
+TYPEORM_PASSWORD=12345678 (change to your password in pgAmin)
+TYPEORM_DATABASE=rss-home-library (change to your database name in pgAmin)
+TYPEORM_PORT=5432
 
-After application running open new terminal and enter:
+MAIN_IMAGE_NAME=home-library-main
+DB_IMAGE_NAME=home-library-db
+DOCKER_MAIN_FILE_NAME=Dockerfile
+DOCKER_DB_FILE_NAME=DockerfileDB
+DOCKER_DB_HOST_DEV=postgres
+DOCKER_DB_USERNAME=postgres
+DOCKER_DB_NAME=postgres
+DOCKER_DB_PASSWORD=postgres
+DOCKER_DB_PORT=5432
 
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
+CRYPT_SALT=10
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
 ```
 
-To run only specific test suite with authorization
+## 4. Install NPM modules
 
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
-
-```
-npm run lint
+```plaintext
+run npm install
 ```
 
+## 5. Run docker build via docker-compose (Docker Desktop should be run)
+
+```plaintext
+run npm run docker-compose build
 ```
-npm run format
+
+## 6. Run docker compose
+
+```plaintext
+run npm run docker-compose up
+
+database should be connected or do the following steps:
+a. Kill process via CTRL+C
+b. Try to wait few seconds (main point), if this doesn't help - move to the point c
+c. Run npm run docker-compose down
+d. Run npm run docker-compose up
 ```
 
-### Debugging in VSCode
+## 7. Check volumes
 
-Press <kbd>F5</kbd> to debug.
+look through ./pgdata and ./pglogs folders
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+## 8. Run tests (should be passed 67 from 67 tests)
+
+```plaintext
+run npm run test
+```
+
+## 9. Check the app
+
+```plaintext
+a. Download the Postman app: https://www.postman.com/
+b. Install the Postman and make request according to the task routes
+c. Database should work without pgAdmin installation
+d. Data is stored in the volume (pgdata folder)
+e. Database logs are stored in the volume (pglogs folder)
+f. Make some safe changes in src folder (f.e. in console.log in main.ts) and the app should restart on every change
+```
+
+## 10. Turn off docker compose
+
+```plaintext
+run npm run docker-compose down
+```
+
+## 11. Check the vulnerabilities scanning script
+
+```plaintext
+run npm run docker:vulnerabilities
+```
+
+## 12. Check the application images uploaded on Docker Hub
+
+```plaintext
+a. Register on https://hub.docker.com/
+b. Visit https://hub.docker.com/repository/docker/deguz/home-library-main/general - main application image
+c. Visit https://hub.docker.com/repository/docker/deguz/home-library-db/general - database image
+```
+
+## 13. Optionally check the app with pgAdmin
+
+```plaintext
+a. Setup and configure pgAdmin and configure database with it
+b. Run database migration npm run migration:run
+c. Run npm run start:dev
+d. Repeat the points №№8-9
+```
+
+### Notes
+
+```plaintext
+a. Migrations for the database are stored in the src/db/migrations folder 
+```
+
+### Thank you for reading and checking

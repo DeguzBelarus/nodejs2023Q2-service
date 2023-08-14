@@ -33,3 +33,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+#envoronment variables
+.env
+
+# postgres volumes
+pgdata
+pglogs
