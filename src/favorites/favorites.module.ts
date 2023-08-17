@@ -11,6 +11,7 @@ import {
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
 import { TrackModule } from 'src/track/track.module';
+import { LoggingModule } from 'src/logger/logger.module';
 
 @Module({
   providers: [FavoritesService],
@@ -22,6 +23,7 @@ import { TrackModule } from 'src/track/track.module';
     TypeOrmModule.forFeature([FavoriteArtistsEntity]),
     TypeOrmModule.forFeature([FavoriteAlbumsEntity]),
     TypeOrmModule.forFeature([FavoriteTracksEntity]),
+    LoggingModule,
   ],
 })
 export class FavoritesModule {}

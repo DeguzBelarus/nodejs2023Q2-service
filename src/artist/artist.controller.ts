@@ -6,8 +6,6 @@ import {
   Post,
   Put,
   Delete,
-  UsePipes,
-  ValidationPipe,
   HttpStatus,
   BadRequestException,
   NotFoundException,
@@ -41,7 +39,6 @@ export class ArtistController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Post()
   async createArtist(@Body() createArtistDto: CreateArtistDto) {
     const artistCreationResult = await this.artistService.createArtist(
@@ -61,7 +58,6 @@ export class ArtistController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Put(':id')
   async updateArtist(
     @Param('id') id: string,

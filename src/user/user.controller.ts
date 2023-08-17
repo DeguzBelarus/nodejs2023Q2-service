@@ -6,8 +6,6 @@ import {
   Post,
   Put,
   Delete,
-  UsePipes,
-  ValidationPipe,
   HttpStatus,
   BadRequestException,
   NotFoundException,
@@ -42,7 +40,6 @@ export class UserController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
     const userCreationResult = await this.userService.createUser(createUserDto);
@@ -64,7 +61,6 @@ export class UserController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
@@ -104,7 +100,9 @@ export class UserController {
       case 'invalid uuid':
         throw new BadRequestException({ message: 'invalid uuid' });
       case "entity doesn't exist":
-        throw new NotFoundException({ message: 'invalid uuid' });
+        throw new NotFoundException({
+          message: 'the user with the specified ID was not found',
+        });
     }
   }
 }

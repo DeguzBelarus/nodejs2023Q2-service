@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate as uuidValidate } from 'uuid';
@@ -15,10 +15,12 @@ import {
   AddFavoriteResultType,
   DeleteFavoriteResultType,
 } from 'src/types/types';
+import { LoggingService } from 'src/logger/logger.service';
 
 @Injectable()
-export class FavoritesService {
+export class FavoritesService implements OnModuleInit {
   constructor(
+    private readonly loggingService: LoggingService,
     @InjectRepository(FavoriteArtistsEntity)
     private readonly favoriteArtistsRepository: Repository<FavoriteArtistsEntity>,
     @InjectRepository(FavoriteAlbumsEntity)
@@ -33,7 +35,14 @@ export class FavoritesService {
     private readonly trackRepository: Repository<TrackEntity>,
   ) {}
 
+  onModuleInit() {
+    this.loggingService.setContext(FavoritesService.name);
+  }
+
   async get() {
+    this.loggingService.verbose(
+      'Getting all favorites artists, albums and tracks data...',
+    );
     const favoriteArtists = await this.favoriteArtistsRepository.find({
       relations: { artist: true },
     });
@@ -43,6 +52,9 @@ export class FavoritesService {
     const favoriteTracks = await this.favoriteTracksRepository.find({
       relations: { track: true },
     });
+    this.loggingService.verbose(
+      'The requested data about favorites was successfully found...',
+    );
     return {
       artists: favoriteArtists.map((favoriteArtist) => favoriteArtist.artist),
       albums: favoriteAlbums.map((favoriteAlbum) => favoriteAlbum.album),
@@ -51,53 +63,125 @@ export class FavoritesService {
   }
 
   async addArtist(id: string): Promise<AddFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(`Searching for the artist with ID ${id}...`);
     const foundArtist = await this.artistsRepository.findOneBy({ id });
-    if (!foundArtist) return "entity doesn't exist";
+    if (!foundArtist) {
+      this.loggingService.warn("Specified artist doesn't exist");
+      return "entity doesn't exist";
+    }
     await this.favoriteArtistsRepository.save({ artistId: id });
+    this.loggingService.verbose(
+      `Artist with ID ${id} was successfully added into favorites`,
+    );
     return 'success';
   }
 
   async addAlbum(id: string): Promise<AddFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundAlbum = await this.albumsRepository.findOneBy({ id });
-    if (!foundAlbum) return "entity doesn't exist";
+    if (!foundAlbum) {
+      this.loggingService.warn("Specified album doesn't exist");
+      return "entity doesn't exist";
+    }
     await this.favoriteAlbumsRepository.save({ albumId: id });
+    this.loggingService.verbose(
+      `Album with ID ${id} was successfully added into favorites`,
+    );
     return 'success';
   }
 
   async addTrack(id: string): Promise<AddFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundTrack = await this.trackRepository.findOneBy({ id });
-    if (!foundTrack) return "entity doesn't exist";
+    if (!foundTrack) {
+      this.loggingService.warn("Specified track doesn't exist");
+      return "entity doesn't exist";
+    }
     await this.favoriteTracksRepository.save({ trackId: id });
+    this.loggingService.verbose(
+      `Track with ID ${id} was successfully added into favorites`,
+    );
     return 'success';
   }
 
   async deleteArtist(id: string): Promise<DeleteFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(
+      `Searching for the artist with ID ${id} in the favorites list...`,
+    );
     const foundFavoriteArtist = await this.favoriteArtistsRepository.findOneBy({
       artistId: id,
     });
-    if (!foundFavoriteArtist) return "entity isn't favorite";
+    if (!foundFavoriteArtist) {
+      this.loggingService.warn(
+        "Specified artist doesn't exist in the favorites list",
+      );
+      return "entity isn't favorite";
+    }
     await foundFavoriteArtist.remove();
+    this.loggingService.verbose(
+      `Artist with ID ${id} was successfully removed from the favorites`,
+    );
   }
 
   async deleteAlbum(id: string): Promise<DeleteFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(
+      `Searching for the album with ID ${id} in the favorites list...`,
+    );
     const foundFavoriteAlbum = await this.favoriteAlbumsRepository.findOneBy({
       albumId: id,
     });
-    if (!foundFavoriteAlbum) return "entity isn't favorite";
+    if (!foundFavoriteAlbum) {
+      this.loggingService.warn(
+        "Specified album doesn't exist in the favorites list",
+      );
+      return "entity isn't favorite";
+    }
     await foundFavoriteAlbum.remove();
+    this.loggingService.verbose(
+      `Album with ID ${id} was successfully removed from the favorites`,
+    );
   }
 
   async deleteTrack(id: string): Promise<DeleteFavoriteResultType> {
-    if (!uuidValidate(id)) return 'invalid uuid';
+    if (!uuidValidate(id)) {
+      this.loggingService.error('Invalid uuid in request');
+      return 'invalid uuid';
+    }
+    this.loggingService.verbose(
+      `Searching for the track with ID ${id} in the favorites list...`,
+    );
     const foundFavoriteTrack = await this.favoriteTracksRepository.findOneBy({
       trackId: id,
     });
-    if (!foundFavoriteTrack) return "entity isn't favorite";
+    if (!foundFavoriteTrack) {
+      this.loggingService.warn(
+        "Specified track doesn't exist in the favorites list",
+      );
+      return "entity isn't favorite";
+    }
     await foundFavoriteTrack.remove();
+    this.loggingService.verbose(
+      `Track with ID ${id} was successfully removed from the favorites`,
+    );
   }
 }

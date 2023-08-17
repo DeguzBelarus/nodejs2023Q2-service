@@ -6,8 +6,6 @@ import {
   Post,
   Put,
   Delete,
-  UsePipes,
-  ValidationPipe,
   HttpStatus,
   BadRequestException,
   NotFoundException,
@@ -41,7 +39,6 @@ export class AlbumController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Post()
   async createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
     const albumCreationResult = await this.albumService.createAlbum(
@@ -61,7 +58,6 @@ export class AlbumController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Put(':id')
   async updateAlbum(
     @Param('id') id: string,

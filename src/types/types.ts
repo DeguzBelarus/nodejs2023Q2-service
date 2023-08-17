@@ -1,4 +1,10 @@
 export type Nullable<T> = T | null;
+export type LogNotificationType =
+  | 'log'
+  | 'error'
+  | 'warn'
+  | 'debug'
+  | 'verbose';
 
 export interface ICreateUserDto {
   login: string;

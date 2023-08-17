@@ -6,8 +6,6 @@ import {
   Post,
   Put,
   Delete,
-  UsePipes,
-  ValidationPipe,
   HttpStatus,
   BadRequestException,
   NotFoundException,
@@ -41,7 +39,6 @@ export class TrackController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Post()
   async createTrack(@Body() createTrackDto: CreateTrackDto) {
     const trackCreationResult = await this.trackService.createTrack(
@@ -61,7 +58,6 @@ export class TrackController {
     }
   }
 
-  @UsePipes(new ValidationPipe())
   @Put(':id')
   async updateTrack(
     @Param('id') id: string,

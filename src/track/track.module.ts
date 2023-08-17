@@ -7,6 +7,7 @@ import { TrackEntity } from 'src/track/track.entity';
 import { DtoValidatorModule } from 'src/dtoValidator/dtoValidator.module';
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
+import { LoggingModule } from 'src/logger/logger.module';
 
 @Module({
   providers: [TrackService],
@@ -16,6 +17,7 @@ import { AlbumModule } from 'src/album/album.module';
     ArtistModule,
     AlbumModule,
     TypeOrmModule.forFeature([TrackEntity]),
+    LoggingModule,
   ],
   exports: [TypeOrmModule],
 })
