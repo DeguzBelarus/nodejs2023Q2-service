@@ -5,10 +5,10 @@ import {
   Scope,
   HttpException,
 } from '@nestjs/common';
-
-import { getErrorsToLog } from 'src/utils';
 import { Request, Response } from 'express';
+
 import { LoggingSaveService } from './logger-save.service';
+import { getErrorsToLog } from 'src/utils';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggingService implements OnModuleInit {
