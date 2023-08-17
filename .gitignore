@@ -40,3 +40,6 @@ lerna-debug.log*
 # postgres volumes
 pgdata
 pglogs
+
+# nest logs
+logs

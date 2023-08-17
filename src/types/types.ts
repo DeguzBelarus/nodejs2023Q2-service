@@ -6,6 +6,15 @@ export type LogNotificationType =
   | 'debug'
   | 'verbose';
 
+export type LogSaveType =
+  | 'log'
+  | 'error'
+  | 'warn'
+  | 'debug'
+  | 'verbose'
+  | 'request'
+  | 'response';
+
 export interface ICreateUserDto {
   login: string;
   password: string;

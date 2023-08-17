@@ -12,6 +12,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { TrackModule } from './track/track.module';
 import { LoggingInterceptor } from './logger/logger.interceptor';
 import { LoggingService } from './logger/logger.service';
+import { LoggingSaveService } from './logger/logger-save.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LoggingService } from './logger/logger.service';
   ],
   providers: [
     LoggingService,
+    LoggingSaveService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
