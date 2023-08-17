@@ -44,7 +44,7 @@ export class LoggingService implements OnModuleInit {
   logRequest(context: string, request: Request) {
     const { url, query, params, body } = request;
     this.logger.log(
-      `[REQUEST DATA]: URL: ${url}, QUERY: ${
+      `[↓ REQUEST DATA ↓]: URL: ${url}, QUERY: ${
         Object.keys(query).length ? JSON.stringify(query) : 'none'
       }, PARAMS: ${
         Object.keys(params).length ? JSON.stringify(params) : 'none'
@@ -61,7 +61,7 @@ export class LoggingService implements OnModuleInit {
   ) {
     const { statusCode } = response;
     this.logger.log(
-      `[RESPONSE DATA]: STATUS CODE: ${
+      `[↑ RESPONSE DATA ↑]: STATUS CODE: ${
         error ? error.getStatus() : statusCode
       }, ${error?.message ? 'ERROR MESSAGE' : 'BODY'}: ${
         error
