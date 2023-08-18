@@ -70,6 +70,6 @@ export const getLogsFileRotationID = (
   if (!files.length) return Date.now();
   const lastLogFileSize = statSync(join(path, files[files.length - 1])).size;
   return lastLogFileSize < LOG_FILES_MAX_SIZE
-    ? files[files.length - 1].match(/\d+/g)[0]
+    ? files[files.length - 1].match(/\d+/g)?.[0] || Date.now()
     : Date.now();
 };
