@@ -1,41 +1,33 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { mkdir, appendFile } from 'fs';
-import { access } from 'fs/promises';
+import { appendFile } from 'fs';
 import { join } from 'path';
 
 import { LogSaveType } from 'src/types/types';
-import { getFormattedDate } from './utils';
+import {
+  getFormattedDate,
+  getLogsFileRotationCount,
+  logsFolderAvailabilityCheck,
+} from './utils';
+import {
+  COMMON_LOGS_FILENAME,
+  ERRORS_LOGS_FILENAME,
+  PATH_TO_COMMON_LOGS_FOLDER,
+  PATH_TO_ERRORS_LOGS_FOLDER,
+} from './constants';
 
 @Injectable()
 export class LoggingSaveService implements OnModuleInit {
-  private readonly pathToLogsFolder = join(__dirname, '../..', 'logs');
-  private readonly pathToCommonLogsFile = join(
-    __dirname,
-    '../..',
-    'logs',
-    'common-logs.txt',
-  );
-  private readonly pathToErrorLogsFile = join(
-    __dirname,
-    '../..',
-    'logs',
-    'errors-logs.txt',
-  );
-
   async onModuleInit() {
-    try {
-      await access(this.pathToLogsFolder);
-    } catch (error) {
-      mkdir(this.pathToLogsFolder, (error) => {
-        error && console.error(error);
-      });
-    }
+    await logsFolderAvailabilityCheck();
   }
 
-  writeLog(log: string, type: LogSaveType) {
+  async writeLog(log: string, type: LogSaveType) {
+    await logsFolderAvailabilityCheck();
     const { day, month, year, hours, minutes, seconds } = getFormattedDate();
+    const logsRotation = getLogsFileRotationCount('log');
+    const logFileName = `${COMMON_LOGS_FILENAME}${logsRotation}.txt`;
     appendFile(
-      this.pathToCommonLogsFile,
+      join(PATH_TO_COMMON_LOGS_FOLDER, logFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [${type.toUpperCase()}]: ${log}\n`,
       (error) => {
         error && console.error(error);
@@ -43,17 +35,22 @@ export class LoggingSaveService implements OnModuleInit {
     );
   }
 
-  writeErrorLog(errorLog: string) {
+  async writeErrorLog(errorLog: string) {
+    await logsFolderAvailabilityCheck();
     const { day, month, year, hours, minutes, seconds } = getFormattedDate();
+    const logsRotation = getLogsFileRotationCount('log');
+    const logFileName = `${COMMON_LOGS_FILENAME}${logsRotation}.txt`;
+    const errorsRotation = getLogsFileRotationCount('error');
+    const errorFileName = `${ERRORS_LOGS_FILENAME}${errorsRotation}.txt`;
     appendFile(
-      this.pathToCommonLogsFile,
+      join(PATH_TO_COMMON_LOGS_FOLDER, logFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [ERROR]: ${errorLog}\n`,
       (error) => {
         error && console.error(error);
       },
     );
     appendFile(
-      this.pathToErrorLogsFile,
+      join(PATH_TO_ERRORS_LOGS_FOLDER, errorFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [ERROR]: ${errorLog}\n`,
       (error) => {
         error && console.error(error);

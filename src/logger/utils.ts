@@ -1,3 +1,15 @@
+import { readdirSync, statSync } from 'fs';
+import { mkdir } from 'fs/promises';
+import { access } from 'fs/promises';
+import {
+  COMMON_LOGS_FILE_NAME_PATTERN,
+  ERROR_LOGS_FILE_NAME_PATTERN,
+  LOG_FILES_MAX_SIZE,
+  PATH_TO_COMMON_LOGS_FOLDER,
+  PATH_TO_ERRORS_LOGS_FOLDER,
+} from './constants';
+import { join } from 'path';
+
 interface IFormattedDateData {
   day: number | string;
   month: number | string;
@@ -6,6 +18,19 @@ interface IFormattedDateData {
   minutes: number | string;
   seconds: number | string;
 }
+
+export const logsFolderAvailabilityCheck = async () => {
+  try {
+    await access(PATH_TO_COMMON_LOGS_FOLDER);
+  } catch (error) {
+    await mkdir(PATH_TO_COMMON_LOGS_FOLDER, { recursive: true });
+  }
+  try {
+    await access(PATH_TO_ERRORS_LOGS_FOLDER);
+  } catch (error) {
+    await mkdir(PATH_TO_ERRORS_LOGS_FOLDER, { recursive: true });
+  }
+};
 
 export const getFormattedDate = (): IFormattedDateData => {
   const dateData = new Date();
@@ -28,4 +53,19 @@ export const getFormattedDate = (): IFormattedDateData => {
     minutes,
     seconds,
   };
+};
+
+export const getLogsFileRotationCount = (type: 'error' | 'log'): number => {
+  const pattern =
+    type === 'log'
+      ? COMMON_LOGS_FILE_NAME_PATTERN
+      : ERROR_LOGS_FILE_NAME_PATTERN;
+  const path =
+    type === 'log' ? PATH_TO_COMMON_LOGS_FOLDER : PATH_TO_ERRORS_LOGS_FOLDER;
+  const files = readdirSync(path)
+    .filter((fileName) => fileName.match(pattern))
+    .sort();
+  if (!files.length) return 1;
+  const lastLogFileSize = statSync(join(path, files[files.length - 1])).size;
+  return lastLogFileSize < LOG_FILES_MAX_SIZE ? files.length : files.length + 1;
 };

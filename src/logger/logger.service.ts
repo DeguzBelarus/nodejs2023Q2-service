@@ -24,32 +24,32 @@ export class LoggingService implements OnModuleInit {
     this.logger.setContext(context);
   }
 
-  log(message: string) {
+  async log(message: string) {
     this.logger.log(message);
-    this.loggingSaveService.writeLog(message, 'log');
+    await this.loggingSaveService.writeLog(message, 'log');
   }
 
-  warn(message: string) {
+  async warn(message: string) {
     this.logger.warn(message);
-    this.loggingSaveService.writeLog(message, 'warn');
+    await this.loggingSaveService.writeLog(message, 'warn');
   }
 
-  error(message: string) {
+  async error(message: string) {
     this.logger.error(message);
-    this.loggingSaveService.writeErrorLog(message);
+    await this.loggingSaveService.writeErrorLog(message);
   }
 
-  debug(message: string) {
+  async debug(message: string) {
     this.logger.debug(message);
-    this.loggingSaveService.writeLog(message, 'debug');
+    await this.loggingSaveService.writeLog(message, 'debug');
   }
 
-  verbose(message: string) {
+  async verbose(message: string) {
     this.logger.verbose(message);
-    this.loggingSaveService.writeLog(message, 'verbose');
+    await this.loggingSaveService.writeLog(message, 'verbose');
   }
 
-  logRequest(context: string, request: Request) {
+  async logRequest(context: string, request: Request) {
     const { url, query, params, body } = request;
     const requestLogMessage = `[↓ REQUEST DATA ↓]: URL: ${url}, QUERY: ${
       Object.keys(query).length ? JSON.stringify(query) : 'none'
@@ -57,7 +57,7 @@ export class LoggingService implements OnModuleInit {
       Object.keys(params).length ? JSON.stringify(params) : 'none'
     }, BODY: ${Object.keys(body).length ? JSON.stringify(body) : 'none'}`;
     this.logger.log(requestLogMessage, context);
-    this.loggingSaveService.writeLog(requestLogMessage, 'request');
+    await this.loggingSaveService.writeLog(requestLogMessage, 'request');
   }
 
   async logResponse(
@@ -77,6 +77,6 @@ export class LoggingService implements OnModuleInit {
         : 'none'
     }`;
     this.logger.log(responseLogMessage, context);
-    this.loggingSaveService.writeLog(responseLogMessage, 'response');
+    await this.loggingSaveService.writeLog(responseLogMessage, 'response');
   }
 }
