@@ -18,6 +18,16 @@ export class LoggingService implements OnModuleInit {
 
   onModuleInit() {
     this.logger.setLogLevels(getErrorsToLog());
+
+    process.on('uncaughtException', async (error, origin) => {
+      await this.error(
+        `Uncaught Exception at: ${origin}, error: ${error.message}`,
+      );
+    });
+
+    process.on('unhandledRejection', async (reason, promise) => {
+      await this.error(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
+    });
   }
 
   setContext(context: string) {
