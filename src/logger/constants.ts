@@ -19,4 +19,5 @@ export const PATH_TO_ERRORS_LOGS_FOLDER = join(
 );
 export const COMMON_LOGS_FILENAME = 'common-logs';
 export const ERRORS_LOGS_FILENAME = 'errors-logs';
-export const LOG_FILES_MAX_SIZE = Number(process.env.LOG_FILES_MAX_SIZE) || 100;
+export const LOG_FILES_MAX_SIZE =
+  Number(process.env.LOG_FILES_MAX_SIZE) || 100000;
