@@ -6,6 +6,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { catchError, tap } from 'rxjs';
+import { Request, Response } from 'express';
 
 import { LoggingService } from './logger.service';
 
@@ -16,8 +17,8 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const { name } = context.getClass();
     const { getRequest, getResponse } = context.switchToHttp();
-    const request = getRequest();
-    const response = getResponse();
+    const request = getRequest<Request>();
+    const response = getResponse<Response>();
 
     this.loggingService.logRequest(name, request);
     return next.handle().pipe(

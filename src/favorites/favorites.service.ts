@@ -1,4 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate as uuidValidate } from 'uuid';
@@ -64,14 +70,14 @@ export class FavoritesService implements OnModuleInit {
 
   async addArtist(id: string): Promise<AddFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the artist with ID ${id}...`);
     const foundArtist = await this.artistsRepository.findOneBy({ id });
     if (!foundArtist) {
-      this.loggingService.warn("Specified artist doesn't exist");
-      return "entity doesn't exist";
+      throw new UnprocessableEntityException({
+        message: 'The artist with the specified ID was not found',
+      });
     }
     await this.favoriteArtistsRepository.save({ artistId: id });
     this.loggingService.verbose(
@@ -82,14 +88,14 @@ export class FavoritesService implements OnModuleInit {
 
   async addAlbum(id: string): Promise<AddFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundAlbum = await this.albumsRepository.findOneBy({ id });
     if (!foundAlbum) {
-      this.loggingService.warn("Specified album doesn't exist");
-      return "entity doesn't exist";
+      throw new UnprocessableEntityException({
+        message: 'The album with the specified ID was not found',
+      });
     }
     await this.favoriteAlbumsRepository.save({ albumId: id });
     this.loggingService.verbose(
@@ -100,14 +106,14 @@ export class FavoritesService implements OnModuleInit {
 
   async addTrack(id: string): Promise<AddFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundTrack = await this.trackRepository.findOneBy({ id });
     if (!foundTrack) {
-      this.loggingService.warn("Specified track doesn't exist");
-      return "entity doesn't exist";
+      throw new UnprocessableEntityException({
+        message: 'The track with the specified ID was not found',
+      });
     }
     await this.favoriteTracksRepository.save({ trackId: id });
     this.loggingService.verbose(
@@ -118,8 +124,7 @@ export class FavoritesService implements OnModuleInit {
 
   async deleteArtist(id: string): Promise<DeleteFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(
       `Searching for the artist with ID ${id} in the favorites list...`,
@@ -128,21 +133,21 @@ export class FavoritesService implements OnModuleInit {
       artistId: id,
     });
     if (!foundFavoriteArtist) {
-      this.loggingService.warn(
-        "Specified artist doesn't exist in the favorites list",
-      );
-      return "entity isn't favorite";
+      throw new NotFoundException({
+        message:
+          'The artist with the specified ID is not in the favorites list',
+      });
     }
     await foundFavoriteArtist.remove();
     this.loggingService.verbose(
       `Artist with ID ${id} was successfully removed from the favorites`,
     );
+    return 'success';
   }
 
   async deleteAlbum(id: string): Promise<DeleteFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(
       `Searching for the album with ID ${id} in the favorites list...`,
@@ -151,21 +156,20 @@ export class FavoritesService implements OnModuleInit {
       albumId: id,
     });
     if (!foundFavoriteAlbum) {
-      this.loggingService.warn(
-        "Specified album doesn't exist in the favorites list",
-      );
-      return "entity isn't favorite";
+      throw new NotFoundException({
+        message: 'The album with the specified ID is not in the favorites list',
+      });
     }
     await foundFavoriteAlbum.remove();
     this.loggingService.verbose(
       `Album with ID ${id} was successfully removed from the favorites`,
     );
+    return 'success';
   }
 
   async deleteTrack(id: string): Promise<DeleteFavoriteResultType> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(
       `Searching for the track with ID ${id} in the favorites list...`,
@@ -174,14 +178,14 @@ export class FavoritesService implements OnModuleInit {
       trackId: id,
     });
     if (!foundFavoriteTrack) {
-      this.loggingService.warn(
-        "Specified track doesn't exist in the favorites list",
-      );
-      return "entity isn't favorite";
+      throw new NotFoundException({
+        message: 'The track with the specified ID is not in the favorites list',
+      });
     }
     await foundFavoriteTrack.remove();
     this.loggingService.verbose(
       `Track with ID ${id} was successfully removed from the favorites`,
     );
+    return 'success';
   }
 }

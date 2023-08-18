@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 
 import { typeORMdataSourceOptions } from './config/typeorm.config';
 import { UserModule } from './user/user.module';
@@ -13,6 +13,7 @@ import { TrackModule } from './track/track.module';
 import { LoggingInterceptor } from './logger/logger.interceptor';
 import { LoggingService } from './logger/logger.service';
 import { LoggingSaveService } from './logger/logger-save.service';
+import { HttpExceptionFilter } from './exception-filter/exception.filter';
 
 @Module({
   imports: [
@@ -30,6 +31,10 @@ import { LoggingSaveService } from './logger/logger-save.service';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })

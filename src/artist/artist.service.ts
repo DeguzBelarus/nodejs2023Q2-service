@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate as uuidValidate } from 'uuid';
@@ -33,14 +38,14 @@ export class ArtistService implements OnModuleInit {
 
   async getById(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the artist with ID ${id}...`);
     const foundArtist = await this.artistRepository.findOneBy({ id });
     if (!foundArtist) {
-      this.loggingService.warn("Requested artist doesn't exist");
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'the artist with the specified ID was not found',
+      });
     } else {
       this.loggingService.verbose(
         `Artist with ID ${id} data was successfully found`,
@@ -55,8 +60,9 @@ export class ArtistService implements OnModuleInit {
     const createArtistDtoValidationResult =
       this.dtoArtistValidator.createArtistDtoValidate(createArtistDto);
     if (typeof createArtistDtoValidationResult === 'string') {
-      this.loggingService.error(createArtistDtoValidationResult);
-      return createArtistDtoValidationResult;
+      throw new BadRequestException({
+        message: createArtistDtoValidationResult,
+      });
     }
     this.loggingService.verbose(`Creating a new artist...`);
     return await this.artistRepository.save(createArtistDto);
@@ -67,20 +73,21 @@ export class ArtistService implements OnModuleInit {
     updateArtistDto: IUpdateArtistDto,
   ): Promise<UpdateEntityResultType<ArtistEntity>> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     const updateArtistDtoValidationResult =
       this.dtoArtistValidator.updateArtistDtoValidate(updateArtistDto);
     if (typeof updateArtistDtoValidationResult === 'string') {
-      this.loggingService.error(updateArtistDtoValidationResult);
-      return updateArtistDtoValidationResult;
+      throw new BadRequestException({
+        message: updateArtistDtoValidationResult,
+      });
     }
     this.loggingService.verbose(`Searching for the artist with ID ${id}...`);
     const foundArtist = await this.artistRepository.findOneBy({ id });
     if (!foundArtist) {
-      this.loggingService.error(`Specified artist with id ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The artist with the specified ID was not found',
+      });
     }
     await this.artistRepository.update(id, updateArtistDto);
     this.loggingService.verbose(
@@ -91,14 +98,14 @@ export class ArtistService implements OnModuleInit {
 
   async deleteArtist(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the artist with ID ${id}...`);
     const foundArtist = await this.artistRepository.findOneBy({ id });
     if (!foundArtist) {
-      this.loggingService.error(`Specified artist with ID ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The artist with the specified ID was not found',
+      });
     }
     await foundArtist.remove();
     this.loggingService.verbose(

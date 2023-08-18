@@ -55,7 +55,9 @@ export const getFormattedDate = (): IFormattedDateData => {
   };
 };
 
-export const getLogsFileRotationCount = (type: 'error' | 'log'): number => {
+export const getLogsFileRotationID = (
+  type: 'error' | 'log',
+): number | string => {
   const pattern =
     type === 'log'
       ? COMMON_LOGS_FILE_NAME_PATTERN
@@ -65,7 +67,9 @@ export const getLogsFileRotationCount = (type: 'error' | 'log'): number => {
   const files = readdirSync(path)
     .filter((fileName) => fileName.match(pattern))
     .sort();
-  if (!files.length) return 1;
+  if (!files.length) return Date.now();
   const lastLogFileSize = statSync(join(path, files[files.length - 1])).size;
-  return lastLogFileSize < LOG_FILES_MAX_SIZE ? files.length : files.length + 1;
+  return lastLogFileSize < LOG_FILES_MAX_SIZE
+    ? files[files.length - 1].match(/\d+/g)[0]
+    : Date.now();
 };

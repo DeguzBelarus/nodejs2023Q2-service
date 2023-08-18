@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate as uuidValidate } from 'uuid';
@@ -36,14 +41,14 @@ export class AlbumService implements OnModuleInit {
 
   async getById(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundAlbum = await this.albumRepository.findOneBy({ id });
     if (!foundAlbum) {
-      this.loggingService.warn("Requested album doesn't exist");
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The album with the specified ID was not found',
+      });
     } else {
       this.loggingService.verbose(
         `Album with ID ${id} data was successfully found`,
@@ -58,8 +63,9 @@ export class AlbumService implements OnModuleInit {
     const createAlbumDtoValidationResult =
       this.dtoAlbumValidator.createAlbumDtoValidate(createAlbumDto);
     if (typeof createAlbumDtoValidationResult === 'string') {
-      this.loggingService.error(createAlbumDtoValidationResult);
-      return createAlbumDtoValidationResult;
+      throw new BadRequestException({
+        message: createAlbumDtoValidationResult,
+      });
     }
     this.loggingService.verbose(
       `Searching for the artist with ID ${createAlbumDto.artistId}...`,
@@ -68,10 +74,9 @@ export class AlbumService implements OnModuleInit {
       id: createAlbumDto.artistId,
     });
     if (!foundArtist) {
-      this.loggingService.error(
-        `Request contains invalid artist ID ${createAlbumDto.artistId} that doesn't exist`,
-      );
-      return 'invalid data';
+      throw new BadRequestException({
+        message: `Request contains invalid artist ID ${createAlbumDto.artistId} that doesn't exist`,
+      });
     }
     this.loggingService.verbose(`Creating a new album...`);
     return await this.albumRepository.save(createAlbumDto);
@@ -82,20 +87,21 @@ export class AlbumService implements OnModuleInit {
     updateAlbumDto: IUpdateAlbumDto,
   ): Promise<UpdateEntityResultType<AlbumEntity>> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     const updateAlbumDtoValidationResult =
       this.dtoAlbumValidator.updateAlbumDtoValidate(updateAlbumDto);
     if (typeof updateAlbumDtoValidationResult === 'string') {
-      this.loggingService.error(updateAlbumDtoValidationResult);
-      return updateAlbumDtoValidationResult;
+      throw new BadRequestException({
+        message: updateAlbumDtoValidationResult,
+      });
     }
     this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundAlbum = await this.albumRepository.findOneBy({ id });
     if (!foundAlbum) {
-      this.loggingService.error(`Specified album with id ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: `Specified album with id ${id} doesn't exist`,
+      });
     }
     if (typeof updateAlbumDto.artistId === 'string') {
       this.loggingService.verbose(
@@ -105,10 +111,9 @@ export class AlbumService implements OnModuleInit {
         id: updateAlbumDto.artistId,
       });
       if (!foundArtist) {
-        this.loggingService.error(
-          `Request contains invalid artist ID ${updateAlbumDto.artistId} that doesn't exist`,
-        );
-        return 'invalid data';
+        throw new BadRequestException({
+          message: `Request contains invalid artist ID ${updateAlbumDto.artistId} that doesn't exist`,
+        });
       }
     }
     await this.albumRepository.update(id, updateAlbumDto);
@@ -120,14 +125,14 @@ export class AlbumService implements OnModuleInit {
 
   async deleteAlbum(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the album with ID ${id}...`);
     const foundAlbum = await this.albumRepository.findOneBy({ id });
     if (!foundAlbum) {
-      this.loggingService.error(`Specified album with ID ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The album with the specified ID was not found',
+      });
     }
     await foundAlbum.remove();
     this.loggingService.verbose(`Album with ID ${id} was successfully deleted`);

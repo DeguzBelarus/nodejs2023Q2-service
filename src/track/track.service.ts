@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate as uuidValidate } from 'uuid';
@@ -39,14 +44,14 @@ export class TrackService implements OnModuleInit {
 
   async getById(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the track with ID ${id}...`);
     const foundTrack = await this.trackRepository.findOneBy({ id });
     if (!foundTrack) {
-      this.loggingService.warn("Requested track doesn't exist");
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The track with the specified ID was not found',
+      });
     } else {
       this.loggingService.verbose(
         `Track with ID ${id} data was successfully found`,
@@ -61,8 +66,9 @@ export class TrackService implements OnModuleInit {
     const createTrackDtoValidationResult =
       this.dtoTrackValidator.createTrackDtoValidate(createTrackDto);
     if (typeof createTrackDtoValidationResult === 'string') {
-      this.loggingService.error(createTrackDtoValidationResult);
-      return createTrackDtoValidationResult;
+      throw new BadRequestException({
+        message: createTrackDtoValidationResult,
+      });
     }
     this.loggingService.verbose(
       `Searching for the artist with ID ${createTrackDto.artistId}...`,
@@ -71,10 +77,9 @@ export class TrackService implements OnModuleInit {
       id: createTrackDto.artistId,
     });
     if (!foundArtist) {
-      this.loggingService.error(
-        `Request contains invalid artist ID ${createTrackDto.artistId} that doesn't exist`,
-      );
-      return 'invalid data';
+      throw new BadRequestException({
+        message: `Request contains invalid artist ID ${createTrackDto.artistId} that doesn't exist`,
+      });
     }
     this.loggingService.verbose(
       `Searching for the album with ID ${createTrackDto.albumId}...`,
@@ -83,10 +88,9 @@ export class TrackService implements OnModuleInit {
       id: createTrackDto.albumId,
     });
     if (!foundAlbum) {
-      this.loggingService.error(
-        `Request contains invalid album ID ${createTrackDto.albumId} that doesn't exist`,
-      );
-      return 'invalid data';
+      throw new BadRequestException({
+        message: `Request contains invalid album ID ${createTrackDto.albumId} that doesn't exist`,
+      });
     }
     this.loggingService.verbose(`Creating a new track...`);
     return await this.trackRepository.save(createTrackDto);
@@ -97,20 +101,21 @@ export class TrackService implements OnModuleInit {
     updateTrackDto: IUpdateTrackDto,
   ): Promise<UpdateEntityResultType<TrackEntity>> {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     const updateTrackDtoValidationResult =
       this.dtoTrackValidator.updateTrackDtoValidate(updateTrackDto);
     if (typeof updateTrackDtoValidationResult === 'string') {
-      this.loggingService.error(updateTrackDtoValidationResult);
-      return updateTrackDtoValidationResult;
+      throw new BadRequestException({
+        message: updateTrackDtoValidationResult,
+      });
     }
     this.loggingService.verbose(`Searching for the track with ID ${id}...`);
     const foundTrack = await this.trackRepository.findOneBy({ id });
     if (!foundTrack) {
-      this.loggingService.error(`Specified track with id ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: `Specified track with id ${id} doesn't exist`,
+      });
     }
     if (typeof updateTrackDto.artistId === 'string') {
       this.loggingService.verbose(
@@ -120,10 +125,9 @@ export class TrackService implements OnModuleInit {
         id: updateTrackDto.artistId,
       });
       if (!foundArtist) {
-        this.loggingService.error(
-          `Request contains invalid artist ID ${updateTrackDto.artistId} that doesn't exist`,
-        );
-        return 'invalid data';
+        throw new BadRequestException({
+          message: `Request contains invalid artist ID ${updateTrackDto.artistId} that doesn't exist`,
+        });
       }
     }
     if (typeof updateTrackDto.albumId === 'string') {
@@ -134,10 +138,9 @@ export class TrackService implements OnModuleInit {
         id: updateTrackDto.albumId,
       });
       if (!foundAlbum) {
-        this.loggingService.error(
-          `Request contains invalid album ID ${updateTrackDto.albumId} that doesn't exist`,
-        );
-        return 'invalid data';
+        throw new BadRequestException({
+          message: `Request contains invalid album ID ${updateTrackDto.albumId} that doesn't exist`,
+        });
       }
     }
     await this.trackRepository.update(id, updateTrackDto);
@@ -149,14 +152,14 @@ export class TrackService implements OnModuleInit {
 
   async deleteTrack(id: string) {
     if (!uuidValidate(id)) {
-      this.loggingService.error('Invalid uuid in request');
-      return 'invalid uuid';
+      throw new BadRequestException({ message: 'Invalid uuid' });
     }
     this.loggingService.verbose(`Searching for the track with ID ${id}...`);
     const foundTrack = await this.trackRepository.findOneBy({ id });
     if (!foundTrack) {
-      this.loggingService.error(`Specified track with ID ${id} doesn't exist`);
-      return "entity doesn't exist";
+      throw new NotFoundException({
+        message: 'The track with the specified ID was not found',
+      });
     }
     await foundTrack.remove();
     this.loggingService.verbose(`Track with ID ${id} was successfully deleted`);

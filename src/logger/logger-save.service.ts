@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { appendFile } from 'fs';
+import { appendFileSync } from 'fs';
 import { join } from 'path';
 
 import { LogSaveType } from 'src/types/types';
 import {
   getFormattedDate,
-  getLogsFileRotationCount,
+  getLogsFileRotationID,
   logsFolderAvailabilityCheck,
 } from './utils';
 import {
@@ -24,37 +24,28 @@ export class LoggingSaveService implements OnModuleInit {
   async writeLog(log: string, type: LogSaveType) {
     await logsFolderAvailabilityCheck();
     const { day, month, year, hours, minutes, seconds } = getFormattedDate();
-    const logsRotation = getLogsFileRotationCount('log');
+    const logsRotation = getLogsFileRotationID('log');
     const logFileName = `${COMMON_LOGS_FILENAME}${logsRotation}.txt`;
-    appendFile(
+    appendFileSync(
       join(PATH_TO_COMMON_LOGS_FOLDER, logFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [${type.toUpperCase()}]: ${log}\n`,
-      (error) => {
-        error && console.error(error);
-      },
     );
   }
 
   async writeErrorLog(errorLog: string) {
     await logsFolderAvailabilityCheck();
     const { day, month, year, hours, minutes, seconds } = getFormattedDate();
-    const logsRotation = getLogsFileRotationCount('log');
+    const logsRotation = getLogsFileRotationID('log');
     const logFileName = `${COMMON_LOGS_FILENAME}${logsRotation}.txt`;
-    const errorsRotation = getLogsFileRotationCount('error');
+    const errorsRotation = getLogsFileRotationID('error');
     const errorFileName = `${ERRORS_LOGS_FILENAME}${errorsRotation}.txt`;
-    appendFile(
+    appendFileSync(
       join(PATH_TO_COMMON_LOGS_FOLDER, logFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [ERROR]: ${errorLog}\n`,
-      (error) => {
-        error && console.error(error);
-      },
     );
-    appendFile(
+    appendFileSync(
       join(PATH_TO_ERRORS_LOGS_FOLDER, errorFileName),
       `${day}.${month}.${year}, ${hours}:${minutes}:${seconds} - [ERROR]: ${errorLog}\n`,
-      (error) => {
-        error && console.error(error);
-      },
     );
   }
 }
