@@ -123,4 +123,11 @@ c. auth/refresh - token refreshing route (use the refreshToken from the login re
 run npm run docker-compose down
 ```
 
+## Notes
+
+```plaintext
+a. Error handling and logging is implemented for uncaughtException in the LoggingService
+a. Error handling and logging is implemented for unhandledRejection  in the LoggingService
+```
+
 ### Thank you for reading and checking
