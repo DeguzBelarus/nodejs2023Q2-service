@@ -54,13 +54,13 @@ LOG_FILES_MAX_SIZE=100000
 run npm install
 ```
 
-## 5 Run docker build via docker-compose (Docker Desktop should be run) - !!Skip in case of checking with pgAdmin
+## 5 Run docker build via docker-compose (Docker Desktop should be run) - !!Skip this point in case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose build
 ```
 
-## 6 Run docker compose - !!Skip in case of checking with pgAdmin
+## 6 Run docker compose - !!Skip this point in case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose up
@@ -79,7 +79,7 @@ a. Run database clearing npm run migration:revert
 b. Run database migration npm run migration:run
 ```
 
-## 8 Start the app with pgAdmin - !!Skip in case of checking with Docker
+## 8 Start the app with pgAdmin - !!Skip this point in case of checking with Docker
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
@@ -92,10 +92,10 @@ c. Run npm run start:dev
 run npm run test:auth
 
 Notice:
-Do not use the general test script
+Do not use the general test script.
 
-important: some tests can fail in the first time after migration
-if some tests are failed run the tests again
+!!important: some tests can fail in the first time after migration:
+a. if some tests are failed run the tests again.
 ```
 
 ## 10. Check the app and logging
@@ -109,15 +109,15 @@ e. Chose another level of logs in LOGGING_LEVEL env variable (from 0 to 2)
 f. Check the app and logging again with new logging level
 ```
 
-## 10. Check the authorization routes according the task
+## 11. Check the authorization routes according the task
 
 ```plaintext
 a. auth/signup - user registration route
 b. auth/login  - user logging in route
-c. auth/refresh - token refreshing routes (use the refreshToken from the login request body)
+c. auth/refresh - token refreshing route (use the refreshToken from the login request body)
 ```
 
-## 11. Turn off docker compose - !!Skip in case of checking with pgAdmin
+## 12. Turn off docker compose - !!Skip in this point case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose down
