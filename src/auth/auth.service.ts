@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import { DtoUserValidatorService } from 'src/dtoValidator/services/dtoUserValida
 import { UserEntity } from 'src/user/user.entity';
 import { LoggingService } from 'src/logger/logger.service';
 import { CreateUserDto, LoginUserDto } from 'src/dtoValidator/dto/user';
-import { IUserSafe } from 'src/types/types';
+import { UserSafe } from 'src/user/user-safe.schema';
 
 @Injectable()
 export class AuthService {
@@ -64,7 +65,7 @@ export class AuthService {
       login: loginUserDto.login,
     });
     if (!foundUser) {
-      throw new UnauthorizedException({
+      throw new ForbiddenException({
         message: 'Invalid login or password',
       });
     }
@@ -73,7 +74,7 @@ export class AuthService {
       foundUser.password,
     );
     if (!passwordsIsMatch) {
-      throw new UnauthorizedException({
+      throw new ForbiddenException({
         message: 'Invalid login or password',
       });
     }
@@ -81,16 +82,49 @@ export class AuthService {
       id: foundUser.id,
       login: foundUser.login,
     });
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        id: foundUser.id,
+        login: foundUser.login,
+      },
+      {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+      },
+    );
     this.loggingService.verbose(`User successfully signed in`);
-    return { accessToken };
+    return { accessToken, refreshToken };
   }
 
-  async authRefresh(user: IUserSafe) {
-    const accessToken = await this.jwtService.signAsync({
-      id: user.id,
-      login: user.login,
-    });
-    this.loggingService.verbose(`Access token has been successfully refreshed`);
-    return { accessToken };
+  async authRefresh(refreshToken?: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException(`No refresh token in the request body`);
+    } else {
+      try {
+        const payload = (await this.jwtService.verifyAsync(refreshToken, {
+          secret: process.env.JWT_SECRET_REFRESH_KEY,
+        })) as UserSafe;
+        const accessTokenNew = await this.jwtService.signAsync({
+          id: payload.id,
+          login: payload.login,
+        });
+        const refreshTokenNew = await this.jwtService.signAsync(
+          {
+            id: payload.id,
+            login: payload.login,
+          },
+          {
+            secret: process.env.JWT_SECRET_REFRESH_KEY,
+            expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+          },
+        );
+        this.loggingService.verbose(
+          `Access token has been successfully refreshed`,
+        );
+        return { accessToken: accessTokenNew, refreshToken: refreshTokenNew };
+      } catch (error: unknown) {
+        throw new ForbiddenException(error);
+      }
+    }
   }
 }

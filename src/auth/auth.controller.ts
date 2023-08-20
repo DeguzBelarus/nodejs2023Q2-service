@@ -1,20 +1,7 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { Request } from 'express';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/dtoValidator/dto/user';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { IUserSafe } from 'src/types/types';
-
-type RequestWithUserData = Request & { user: IUserSafe };
 
 @Controller('auth')
 export class AuthController {
@@ -31,11 +18,10 @@ export class AuthController {
     return await this.authService.login(loginUserDto);
   }
 
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  async authRefresh(@Req() request: RequestWithUserData) {
-    const { user } = request;
-    return await this.authService.authRefresh(user);
+  async authRefresh(@Body() body: { refreshToken?: string }) {
+    const { refreshToken } = body;
+    return await this.authService.authRefresh(refreshToken);
   }
 }
