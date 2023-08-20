@@ -24,8 +24,8 @@ PORT=4000
 
 TYPEORM_HOST_DEV=localhost
 TYPEORM_USERNAME=postgres
-TYPEORM_PASSWORD=your_password (!!chose your password in pgAdmin)
-TYPEORM_DATABASE=rss-home-library (!!chose your database name in pgAdmin)
+TYPEORM_PASSWORD=12345678 (change to your password in pgAmin)
+TYPEORM_DATABASE=rss-home-library (change to your database name in pgAmin)
 TYPEORM_PORT=5432
 
 MAIN_IMAGE_NAME=home-library-main
