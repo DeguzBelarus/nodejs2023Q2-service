@@ -14,6 +14,8 @@ import { LoggingInterceptor } from './logger/logger.interceptor';
 import { LoggingService } from './logger/logger.service';
 import { LoggingSaveService } from './logger/logger-save.service';
 import { HttpExceptionFilter } from './exception-filter/exception.filter';
+import { JwtGlobalModule } from './jwt.module';
+import { GuardsModule } from './guards/guards.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { HttpExceptionFilter } from './exception-filter/exception.filter';
     AlbumModule,
     TrackModule,
     FavoritesModule,
+    GuardsModule,
+    JwtGlobalModule,
   ],
   providers: [
     LoggingService,

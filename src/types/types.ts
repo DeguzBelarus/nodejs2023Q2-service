@@ -78,12 +78,23 @@ export type UpdateUserPasswordResultType =
   | 'invalid uuid'
   | 'invalid data'
   | "user doesn't exist"
-  | "passwords don't match";
+  | "passwords don't match"
+  | 'min login length is 3 characters'
+  | 'max login length is 255 characters'
+  | 'min password length is 3 characters'
+  | 'max password length is 30 characters'
+  | 'incorrect password data';
 export type CreateUserResultType =
   | IUserSafe
   | 'login already in use'
   | 'insufficient data for creation'
-  | 'invalid data';
+  | 'invalid data'
+  | 'min login length is 3 characters'
+  | 'max login length is 255 characters'
+  | 'min password length is 3 characters'
+  | 'max password length is 30 characters'
+  | 'incorrect password data';
+
 export type CreateEntityResultType<T> =
   | T
   | 'insufficient data for creation'
