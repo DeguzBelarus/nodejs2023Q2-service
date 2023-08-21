@@ -54,13 +54,13 @@ LOG_FILES_MAX_SIZE=100000
 run npm install
 ```
 
-## 5 Run docker build via docker-compose (Docker Desktop should be run) - !!Skip this point in case of checking with pgAdmin
+## 5. Run docker build via docker-compose (Docker Desktop should be run) - !!skip this point in case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose build
 ```
 
-## 6 Run docker compose - !!Skip this point in case of checking with pgAdmin
+## 6. Run docker compose - !!skip this point in case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose up
@@ -80,14 +80,14 @@ b. Run database clearing npm run migration:revert
 c. Run database migration npm run migration:run
 ```
 
-## 8 Start the app with pgAdmin - !!Skip this point in case of checking with Docker
+## 8. Start the app with pgAdmin - !!skip this point in case of checking with Docker
 
 ```plaintext
 a. Setup and configure pgAdmin and configure database with it
 c. Run npm run start:dev
 ```
 
-## 9. Run tests twice (tables should be prepared) - should be passed 94 from 94 tests
+## 9. Run tests twice (tables should be prepared after the first migration) - should be passed 94 from 94 tests
 
 ```plaintext
 run npm run test:auth
@@ -116,10 +116,10 @@ g. Rerun the app and check logging again with new logging level and max size of 
 ```plaintext
 a. auth/signup - user registration route
 b. auth/login  - user logging in route
-c. auth/refresh - token refreshing route (use the refreshToken from the login request body)
+c. auth/refresh - token refreshing route (use the refreshToken from the previous login request body and add it (refreshing) into your refresh token request body)
 ```
 
-## 12. Turn off docker compose - !!Skip in this point case of checking with pgAdmin
+## 12. Turn off docker compose - !!skip in this point case of checking with pgAdmin
 
 ```plaintext
 run npm run docker-compose down
@@ -128,8 +128,8 @@ run npm run docker-compose down
 ## Notes
 
 ```plaintext
-a. Error handling and logging is implemented for uncaughtException in the LoggingService
-a. Error handling and logging is implemented for unhandledRejection  in the LoggingService
+a. Error handling and logging is implemented for uncaughtException in the LoggingService on module init
+b. Error handling and logging is implemented for unhandledRejection in the LoggingService on module init
 ```
 
 ### Thank you for reading and checking
