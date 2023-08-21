@@ -75,8 +75,9 @@ d. Run npm run docker-compose up
 ## 7. Database preparation
 
 ```plaintext
-a. Run database clearing npm run migration:revert
-b. Run database migration npm run migration:run
+a. If you checking with pgAdmin and have all necessary and identical entities in your DB - just clear these tables and go to the next point
+b. Run database clearing npm run migration:revert
+c. Run database migration npm run migration:run
 ```
 
 ## 8 Start the app with pgAdmin - !!Skip this point in case of checking with Docker
@@ -86,16 +87,16 @@ a. Setup and configure pgAdmin and configure database with it
 c. Run npm run start:dev
 ```
 
-## 9. Run tests (should be passed 94 from 94 tests)
+## 9. Run tests twice (tables should be prepared) - should be passed 94 from 94 tests
 
 ```plaintext
 run npm run test:auth
 
 Notice:
-Do not use the general test script.
+Do not use the general test script (from the previous task).
 
 !!important: some tests can fail in the first time after migration:
-a. if some tests are failed run the tests again.
+a. if some tests are failed in the first time after migration - run the tests again.
 ```
 
 ## 10. Check the app and logging
@@ -106,7 +107,8 @@ b. Install the Postman and make requests according to the task routes
 c. Check the logs files in ./logs/common
 d. Check the error logs files in ./logs/errors
 e. Chose another level of logs in LOGGING_LEVEL env variable (from 0 to 2)
-f. Check the app and logging again with new logging level
+f. Chose another max size of logs in LOG_FILES_MAX_SIZE env variable (100000 - 100 000 bytes is default in .env)
+g. Rerun the app and check logging again with new logging level and max size of the logs files
 ```
 
 ## 11. Check the authorization routes according the task

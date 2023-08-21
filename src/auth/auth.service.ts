@@ -96,35 +96,22 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async authRefresh(refreshToken?: string) {
-    if (!refreshToken) {
-      throw new UnauthorizedException(`No refresh token in the request body`);
-    } else {
-      try {
-        const payload = (await this.jwtService.verifyAsync(refreshToken, {
-          secret: process.env.JWT_SECRET_REFRESH_KEY,
-        })) as UserSafe;
-        const accessTokenNew = await this.jwtService.signAsync({
-          id: payload.id,
-          login: payload.login,
-        });
-        const refreshTokenNew = await this.jwtService.signAsync(
-          {
-            id: payload.id,
-            login: payload.login,
-          },
-          {
-            secret: process.env.JWT_SECRET_REFRESH_KEY,
-            expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-          },
-        );
-        this.loggingService.verbose(
-          `Access token has been successfully refreshed`,
-        );
-        return { accessToken: accessTokenNew, refreshToken: refreshTokenNew };
-      } catch (error: unknown) {
-        throw new ForbiddenException(error);
-      }
-    }
+  async authRefresh(user: UserSafe) {
+    const accessTokenNew = await this.jwtService.signAsync({
+      id: user.id,
+      login: user.login,
+    });
+    const refreshTokenNew = await this.jwtService.signAsync(
+      {
+        id: user.id,
+        login: user.login,
+      },
+      {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+      },
+    );
+    this.loggingService.verbose(`Access token has been successfully refreshed`);
+    return { accessToken: accessTokenNew, refreshToken: refreshTokenNew };
   }
 }

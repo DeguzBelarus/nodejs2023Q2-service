@@ -1,7 +1,20 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Req,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { Request } from 'express';
 
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/dtoValidator/dto/user';
+import { AuthRefreshGuard } from 'src/guards/auth-refresh.guard';
+import { UserSafe } from 'src/user/user-safe.schema';
+
+type RequestWithUserPayloadType = Request & { user: UserSafe };
 
 @Controller('auth')
 export class AuthController {
@@ -18,10 +31,11 @@ export class AuthController {
     return await this.authService.login(loginUserDto);
   }
 
+  @UseGuards(AuthRefreshGuard)
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  async authRefresh(@Body() body: { refreshToken?: string }) {
-    const { refreshToken } = body;
-    return await this.authService.authRefresh(refreshToken);
+  async authRefresh(@Req() request: RequestWithUserPayloadType) {
+    const { user } = request;
+    return await this.authService.authRefresh(user);
   }
 }
