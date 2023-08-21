@@ -132,4 +132,4 @@ a. Error handling and logging is implemented for uncaughtException in the Loggin
 b. Error handling and logging is implemented for unhandledRejection in the LoggingService on module init
 ```
 
-### Thank you for reading and checking
+### Thank you for reading and checking :)
