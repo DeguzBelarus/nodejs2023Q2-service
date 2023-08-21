@@ -1,72 +1,135 @@
-# Home Library Service
+# Home Library Service (with PostgreSQL database via TypeORM and Docker)
+
+## Instructions
 
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+Chose any one way to check:
 
-## Downloading
+1. Install the Docker Desktop application from <https://www.docker.com/products/docker-desktop/> (if You want to check with Docker)
+2. Install the PostgreSQL with pgAmin from <https://www.postgresql.org/download/> (if You want to check with pgAmin database)
 
-```
-git clone {repository URL}
-```
+## 1. Clone the repository
 
-## Installing NPM modules
-
-```
-npm install
+```plaintext
+git clone https://github.com/DeguzBelarus/nodejs2023Q2-service.git
 ```
 
-## Running application
+## 2. Go to the project folder and chose the develop-part-3 branch in the git bash terminal
 
-```
-npm start
-```
+## 3. Create .env file with following content
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+```plaintext
+PORT=4000
 
-## Testing
+TYPEORM_HOST_DEV=localhost
+TYPEORM_USERNAME=postgres
+TYPEORM_PASSWORD=12345678 (change to your password in pgAmin)
+TYPEORM_DATABASE=rss-home-library (change to your database name in pgAmin)
+TYPEORM_PORT=5432
 
-After application running open new terminal and enter:
+MAIN_IMAGE_NAME=home-library-main
+DB_IMAGE_NAME=home-library-db
+DOCKER_MAIN_FILE_NAME=Dockerfile
+DOCKER_DB_FILE_NAME=DockerfileDB
+DOCKER_DB_HOST_DEV=postgres
+DOCKER_DB_USERNAME=postgres
+DOCKER_DB_NAME=postgres
+DOCKER_DB_PASSWORD=postgres
+DOCKER_DB_PORT=5432
 
-To run all tests without authorization
+CRYPT_SALT=10
+JWT_SECRET_KEY=secret123123
+JWT_SECRET_REFRESH_KEY=secret123123
+TOKEN_EXPIRE_TIME=1h
+TOKEN_REFRESH_EXPIRE_TIME=24h
 
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
+LOGGING_LEVEL=2
+LOG_FILES_MAX_SIZE=100000
 ```
 
-### Auto-fix and format
+## 4. Install NPM modules
 
-```
-npm run lint
-```
-
-```
-npm run format
+```plaintext
+run npm install
 ```
 
-### Debugging in VSCode
+## 5. Run docker build via docker-compose (Docker Desktop should be run) - !!skip this point in case of checking with pgAdmin
 
-Press <kbd>F5</kbd> to debug.
+```plaintext
+run npm run docker-compose build
+```
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+## 6. Run docker compose - !!skip this point in case of checking with pgAdmin
+
+```plaintext
+run npm run docker-compose up
+
+database should be connected or do the following steps:
+a. Kill process via CTRL+C
+b. Try to wait few seconds (main point), if this doesn't help - move to the point c
+c. Run npm run docker-compose down
+d. Run npm run docker-compose up
+```
+
+## 7. Database preparation
+
+```plaintext
+a. If you checking with pgAdmin and have all necessary and identical entities in your DB - just clear these tables and go to the next point
+b. Run database clearing npm run migration:revert
+c. Run database migration npm run migration:run
+```
+
+## 8. Start the app with pgAdmin - !!skip this point in case of checking with Docker
+
+```plaintext
+a. Setup and configure pgAdmin and configure database with it
+c. Run npm run start:dev
+```
+
+## 9. Run tests twice (tables should be prepared after the first migration) - should be passed 94 from 94 tests
+
+```plaintext
+run npm run test:auth
+
+Notice:
+Do not use the general test script (from the previous task).
+
+!!important: some tests can fail in the first time after migration:
+a. if some tests are failed in the first time after migration - run the tests again.
+```
+
+## 10. Check the app and logging
+
+```plaintext
+a. Download the Postman app: https://www.postman.com/
+b. Install the Postman and make requests according to the task routes
+c. Check the logs files in ./logs/common
+d. Check the error logs files in ./logs/errors
+e. Chose another level of logs in LOGGING_LEVEL env variable (from 0 to 2)
+f. Chose another max size of logs in LOG_FILES_MAX_SIZE env variable (100000 - 100 000 bytes is default in .env)
+g. Rerun the app and check logging again with new logging level and max size of the logs files
+```
+
+## 11. Check the authorization routes according the task
+
+```plaintext
+a. auth/signup - user registration route
+b. auth/login  - user logging in route
+c. auth/refresh - token refreshing route (use the refreshToken from the previous login request body and add it (refreshing) into your refresh token request body)
+```
+
+## 12. Turn off docker compose - !!skip in this point case of checking with pgAdmin
+
+```plaintext
+run npm run docker-compose down
+```
+
+## Notes
+
+```plaintext
+a. Error handling and logging is implemented for uncaughtException in the LoggingService on module init
+b. Error handling and logging is implemented for unhandledRejection in the LoggingService on module init
+```
+
+### Thank you for reading and checking :)
